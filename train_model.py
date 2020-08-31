@@ -8,19 +8,20 @@ from config import *
 def fit_model(model,X_train, Y_train, X_test, Y_test, save_model_dir):
     hist=None
 
-    def scheduler(epoch):
-        lr=None
-        if epoch >20:
-            lr=0.0005
-        elif epoch >10:
-            lr=0.001
-        else:
-            lr=0.01
-        return lr
+    # def scheduler(epoch):
+    #     lr=None
+    #     if epoch >20:
+    #         lr=0.0005
+    #     elif epoch >10:
+    #         lr=0.001
+    #     else:
+    #         lr=0.01
+    #     return lr
 
-    change_lr = LearningRateScheduler(scheduler,verbose=1)
+    # change_lr = LearningRateScheduler(scheduler,verbose=1)
+    # ,callbacks=[change_lr]
     hist = model.fit(X_train, Y_train,
-                        batch_size=batch_size, epochs=epochs, verbose=2,callbacks=[change_lr],
+                        batch_size=batch_size, epochs=epochs, verbose=2,
                         validation_data=(X_test, Y_test))
     model.save(save_model_dir)
     return hist
