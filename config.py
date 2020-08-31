@@ -2,9 +2,9 @@
 
 # model_names, select_chan_way, dataformat_list,chans,chans_num 都具有相同的长度
 is_plot_model = True # 在1080上，改为 False
-model_names = ['DeepConvNet','DeepConvNet','DeepConvNet']  # 先改只有一个模型融合的情况
+model_names = ['Smaller_DeepConvNet','Smaller_DeepConvNet','Smaller_DeepConvNet']  # 先改只有一个模型融合的情况
 select_chan_way = ['P_left','P_mid','P_right'] # 每个分支对应的输入数据
-input_way = 'branch' # branch together 一起 或者 融合
+input_way = 'branch' # branch together 一起 或者 分支
 sample_points = 200
 total_times=1
 epochs = 3
@@ -26,6 +26,7 @@ model_to_dataformat = {
     'EEGNet':'2D', 
     'ShallowConvNet':'2D',
     'DeepConvNet':'2D',
+    'Smaller_DeepConvNet':'2D',
     'Transpose_Net':'2D',
     'Transfer_Proposed_Conv_R':'2D',
     'JNE_CNN':'3D',

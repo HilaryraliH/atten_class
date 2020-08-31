@@ -1,7 +1,4 @@
 
-
-
-
 from keras import backend as Bk
 from keras.engine.topology import Layer
 from keras import initializers

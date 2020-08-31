@@ -159,6 +159,48 @@ def DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     return Model(inputs=model_input, outputs=softmax)
 
 
+def Smaller_DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
+    # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
+    # changed as the comments
+    block1 = Conv2D(8, (1, 5), input_shape=(Chans, Samples, 1), kernel_constraint=max_norm(2., axis=(0, 1, 2)))(
+        model_input)  # it's channel first before
+
+    block1 = Conv2D(8, (Chans, 1), kernel_constraint=max_norm(2., axis=(0, 1, 2)))(block1)
+    block1 = BatchNormalization(epsilon=1e-05, momentum=0.1)(block1)  # it's axis=1 before
+    block1 = Activation('elu')(block1)
+
+    block1 = MaxPooling2D(pool_size=(1, 2), strides=(1, 2))(block1)
+    block1 = Dropout(dropoutRate)(block1)
+
+    block2 = Conv2D(16, (1, 5), kernel_constraint=max_norm(2., axis=(0, 1, 2)))(block1)
+    block2 = BatchNormalization(epsilon=1e-05, momentum=0.1)(block2)
+    block2 = Activation('elu')(block2)
+
+    block2 = MaxPooling2D(pool_size=(1, 2), strides=(1, 2))(block2)
+    block2 = Dropout(dropoutRate)(block2)
+
+    block3 = Conv2D(32, (1, 5), kernel_constraint=max_norm(2., axis=(0, 1, 2)))(block2)
+    block3 = BatchNormalization(epsilon=1e-05, momentum=0.1)(block3)
+    block3 = Activation('elu')(block3)
+
+    block3 = MaxPooling2D(pool_size=(1, 2), strides=(1, 2))(block3)
+    block3 = Dropout(dropoutRate)(block3)
+
+    block4 = Conv2D(64, (1, 5), kernel_constraint=max_norm(2., axis=(0, 1, 2)))(block3)
+    block4 = BatchNormalization(epsilon=1e-05, momentum=0.1)(block4)
+    block4 = Activation('elu')(block4)
+
+    block4 = MaxPooling2D(pool_size=(1, 2), strides=(1, 2))(block4)
+    block4 = Dropout(dropoutRate)(block4)
+
+    flatten = Flatten()(block4)
+    dense = Dense(nb_classes, kernel_constraint=max_norm(0.5))(flatten)
+    softmax = Activation('softmax')(dense)
+
+    return Model(inputs=model_input, outputs=softmax)
+
+
+
 def ShallowConvNet(model_input,Chans, nb_classes=2, dropoutRate=0.5):
     # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
     # changed as the comments
