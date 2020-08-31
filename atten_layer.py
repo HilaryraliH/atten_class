@@ -29,9 +29,10 @@ class self_attention(Layer):  # 输入：(samples, 46, 128) : 46个词，每一�
         assert len(input_shape) == 3
         print('################################# in bulid func: ###############################')
         print('inputshape: ', input_shape)
-        self.wq = Bk.variable(self.init((input_shape[2], self.d3)))
-        self.wk = Bk.variable(self.init((input_shape[2], self.d3)))
-        self.wv = Bk.variable(self.init((input_shape[2], self.d2)))
+        length = input_shape[2]
+        self.wq = Bk.variable(self.init((length, self.d3)))
+        self.wk = Bk.variable(self.init((length, self.d3)))
+        self.wv = Bk.variable(self.init((length, self.d2)))
         super(self_attention, self).build(input_shape)
 
     def call(self, x, mask=None): # 这里，若去掉了mask=None，则会出错！！！为什么？
@@ -45,14 +46,47 @@ class self_attention(Layer):  # 输入：(samples, 46, 128) : 46个词，每一�
         print('Q,K,V.shape: ', Q.shape, K.shape, V.shape)
         alpha = Bk.softmax(Bk.batch_dot(K, Bk.permute_dimensions(Q, (0, 2, 1))), axis=1)  # samples，N,N
         alpha = Bk.permute_dimensions(alpha, (0, 2, 1))  # samples，N,N
-        print('alpha.shape: ', alpha.shape)
-        # 每一行是一个注意力权重向量，与V的各行加权和，得到H各行
-        H = Bk.batch_dot(alpha, V)
+        print('alpha.shape: ', alpha.shape) 
+        H = Bk.batch_dot(alpha, V) # 每一行是一个注意力权重向量，与V的各行加权和，得到H各行
         print('H.shape: ',H.shape)
         return H # samples,N,d2
 
     def compute_output_shape(self, input_shape):
         return input_shape[0], input_shape[1], self.d2
+
+
+class alpha_attention(Layer):  
+
+    def __init__(self, **kwargs):
+        self.init = initializers.get('normal')
+        self.d = 1  # 可以改变
+        super(alpha_attention, self).__init__()
+
+    def get_config(self):
+        config = {
+            'd': self.d
+        }
+        base_config = super(alpha_attention, self).get_config()
+        return dict(list(base_config.items()) + list(config.items()))
+
+    def build(self, input_shape):
+        assert len(input_shape) == 3
+        print('################################# in bulid func: ###############################')
+        print('inputshape: ', input_shape)
+        self.w = Bk.variable(self.init((1, input_shape[1])))
+        super(alpha_attention, self).build(input_shape)
+
+    def call(self, x, mask=None): # 这里，若去掉了mask=None，则会出错！！！为什么？
+        print('##################in func call:###############\n')
+        print('x.shape: ', x.shape)
+        print(x.shape[2])
+        '''3维的计算'''
+        Q = Bk.dot(self.w,x)  # samples，N,d1     d1,d3  ->    N,d3 # batch_dot 也可以换成 dot
+        print('Q,K,V.shape: ', Q.shape)
+        return Q # samples,N,d2
+
+    def compute_output_shape(self, input_shape):
+        return input_shape[0], 1,input_shape[-1]
 
 
 # 网上的idmb数据集的，没有跑通
