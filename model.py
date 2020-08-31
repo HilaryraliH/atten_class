@@ -283,17 +283,13 @@ def erect_3branch_model():
     conca2 = expand_layer(model2.layers[-3].output)
 
     my_concatenate = Concatenate(axis=-2)([conca0, conca1,conca2])
-    print('my_concatenate.shape  after concatenate',my_concatenate.shape)
-
     from atten_layer import self_attention,alpha_attention,AttentionLayer
-    #print('model0.layers[-3].output.shape',model0.layers[-3].output.shape)
     my_concatenate = AttentionLayer()(my_concatenate)
-    print('my_concatenate.shape after self_attention', my_concatenate.shape)
 
     # my_concatenate = Flatten()(my_concatenate)
     print('my_concatenate.shape after Flatten', my_concatenate.shape)
 
-    my_concatenate = Dense(100)(my_concatenate)
+    # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
