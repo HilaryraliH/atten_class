@@ -89,7 +89,7 @@ class alpha_attention(Layer):
         return input_shape[0], 1,input_shape[-1]
 
 
-
+# JNE文章中的
 class AttentionLayer(Layer):
     def __init__(self, **kwargs):
         super(AttentionLayer, self).__init__(** kwargs)
