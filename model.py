@@ -11,6 +11,20 @@ from keras.engine.topology import Layer
 
 Samples = 200
 
+class SeBlock(Layer):   
+    def __init__(self, reduction=4,**kwargs):
+        super(SeBlock,self).__init__(**kwargs)
+        self.reduction = reduction
+    def build(self,input_shape):#构建layer时需要实现
+    	pass
+    def call(self, inputs):
+        x = GlobalAveragePooling2D()(inputs)
+        print('after GlobalAveragePooling2D, x.shape',x.shape)
+        x = Dense(int(x.shape[-1]) // self.reduction, use_bias=False,activation='relu')(x)
+        x = Dense(int(inputs.shape[-1]), use_bias=False,activation='hard_sigmoid')(x)
+        return Multiply()([inputs,x])    #给通道加权重
+        #return inputs*x   
+
 #%% 输入为3D（1，200，chans）的模型
 def JNE_CNN(model_input,Chans, nb_classes=2):
     # article: Inter-subject transfer learning with an end-to-end deep convolutional neural network for EEG-based BCI
@@ -28,6 +42,20 @@ def JNE_CNN(model_input,Chans, nb_classes=2):
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
+def JNE_CNN_SEBlock(model_input,chans,nb_classes=2):
+    data = Conv2D(60, (1, 4), strides=(1, 2), activation='relu')(model_input)
+    data = MaxPooling2D(pool_size=(1, 2))(data)
+    data = Conv2D(40, (1, 3), activation='relu')(data)
+    data = SeBlock()(data)
+    data = Conv2D(20, (1, 2), activation='relu')(data)
+    data = Flatten()(data)
+    data = Dropout(0.2)(data)
+    data = Dense(100, activation='relu')(data)
+    data = Dropout(0.3)(data)
+    data = Dense(nb_classes, activation='softmax')(data)
+    model = Model(model_input, data)
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
 
 def Proposed_Conv(model_input,Chans, nb_classes=2):
     dropoutRate = 0.5
@@ -159,6 +187,10 @@ def DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     return Model(inputs=model_input, outputs=softmax)
 
 
+
+        
+
+
 def Smaller_DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
     # changed as the comments
@@ -198,7 +230,6 @@ def Smaller_DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     softmax = Activation('softmax')(dense)
 
     return Model(inputs=model_input, outputs=softmax)
-
 
 
 def ShallowConvNet(model_input,Chans, nb_classes=2, dropoutRate=0.5):
