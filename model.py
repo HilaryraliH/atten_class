@@ -312,6 +312,8 @@ def get_model_input(dataformat,chan_num):
 
 def erect_1branch_model():
     chan_num = np.sum(np.array(chans_num))
+    if band_pass and input_way=='together':
+        chan_num = chan_num*band_pass_num
     model_input = get_model_input(dataformat_list[0],chan_num)
     model = eval(model_names[0])(model_input,chan_num)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -326,7 +328,7 @@ def erect_n_branch_model():
         model[i] = eval(model_names[i])(model_input[i],chans_num[i])
 
     my_concatenate = Concatenate()([model[i].layers[-3].output for i in range(len(model_names))])
-    # my_concatenate = Dense(100)(my_concatenate)
+    my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -379,7 +381,7 @@ def erect_3branch_model():
     from atten_layer import self_attention,alpha_attention,AttentionLayer
     my_concatenate = AttentionLayer()(my_concatenate) # out: (none, 1600)
     # my_concatenate = Flatten()(my_concatenate)
-    # my_concatenate = Dense(100)(my_concatenate)
+    my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
 

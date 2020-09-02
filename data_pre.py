@@ -13,7 +13,6 @@ def load_one_sub(sub,chan,dataformat,datafile):
     # load total data
     if band_pass:
         label_file = sio.loadmat(data_dir+'62.mat')
-
         data_file = sio.loadmat(datafile)
         data = data_file['total_data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
         label = label_file['Label']  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
@@ -92,6 +91,15 @@ def load_sub(sub):
         (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans[0],dataformat_list[0],data_file_list[0])
         Train_x = [train_x]*len(select_chan_way)
         Test_x = [test_x]*len(select_chan_way)
+    # 若一个模型，一种chans，但要所有bandpass的数据一起用，返回一个list数据
+    elif len(set(select_chan_way))==1 and band_pass:
+        for i in range(len(data_file_list)):
+            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans[0],dataformat_list[0],data_file_list[i])
+            print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
+            Train_x.append(train_x)
+            Train_y= train_y
+            Test_x.append(test_x)
+            Test_y = test_y
     else:
         for i,chan in enumerate(chans):
             (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chan,dataformat_list[i],data_file_list[i])

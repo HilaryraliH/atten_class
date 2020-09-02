@@ -34,8 +34,8 @@ for once in range(total_times):
         if len(model_names)==1:
             model = erect_1branch_model()
         else:
-            # model = erect_n_branch_model()
-            model = erect_n_branch_model_with_attention()
+            model = erect_n_branch_model()
+            # model = erect_n_branch_model_with_attention()
 
         # show model
         if sub == 0 and once == 0:
