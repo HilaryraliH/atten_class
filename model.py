@@ -18,6 +18,7 @@ class SeBlock(Layer):
     def build(self,input_shape):#构建layer时需要实现
     	pass
     def call(self, inputs):
+        print(inputs.shape)
         x = GlobalAveragePooling2D()(inputs)
         print('after GlobalAveragePooling2D, x.shape',x.shape)
         x = Dense(int(x.shape[-1]) // self.reduction, use_bias=False,activation='relu')(x)
@@ -48,6 +49,7 @@ def JNE_CNN_SEBlock(model_input,chans,nb_classes=2):
     data = Conv2D(40, (1, 3), activation='relu')(data)
     data = SeBlock()(data)
     data = Conv2D(20, (1, 2), activation='relu')(data)
+    data = SeBlock()(data)
     data = Flatten()(data)
     data = Dropout(0.2)(data)
     data = Dense(100, activation='relu')(data)
@@ -187,10 +189,6 @@ def DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     return Model(inputs=model_input, outputs=softmax)
 
 
-
-        
-
-
 def Smaller_DeepConvNet(model_input,Chans, nb_classes=2,dropoutRate=0.5):
     # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
     # changed as the comments
@@ -319,21 +317,44 @@ def erect_1branch_model():
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
+def erect_n_branch_model():
+    model_input = [None]*len(model_names)
+    model = [None]*len(model_names)
+    for i in range(len(model_names)):
+        model_input[i] = get_model_input(dataformat_list[i],chans_num[i])
+    for i in range(len(model_names)):
+        model[i] = eval(model_names[i])(model_input[i],chans_num[i])
 
-def erect_2branch_model():
-    model_input0 = get_model_input(dataformat_list[0],chans_num[0])
-    model_input1 = get_model_input(dataformat_list[1],chans_num[1])
-
-    model0 = eval(model_names[0])(model_input0,chans_num[0])
-    model1 = eval(model_names[1])(model_input1,chans_num[1])
-
-    model_input = [model_input0, model_input1]
-
-    my_concatenate = Concatenate()([model0.layers[-3].output, model1.layers[-3].output])
+    my_concatenate = Concatenate()([model[i].layers[-3].output for i in range(len(model_names))])
+    # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
+
+def erect_n_branch_model_with_attention():
+    model_input = [None]*len(model_names)
+    model = [None]*len(model_names)
+    concaten = [None]*len(model_names)
+    for i in range(len(model_names)):
+        model_input[i] = get_model_input(dataformat_list[i],chans_num[i])
+    for i in range(len(model_names)):
+        model[i] = eval(model_names[i])(model_input[i],chans_num[i])
+    
+    # 注意力及之前先进行维度扩张
+    for i in range(len(model_names)):
+        concaten[i] = Reshape((1,model[i].layers[-3].output_shape[-1]))(model[i].layers[-3].output)
+
+    my_concatenate = Concatenate(axis=-2)([concaten[i] for i in range(len(model_names))])
+    from atten_layer import self_attention,alpha_attention,AttentionLayer
+    my_concatenate = AttentionLayer()(my_concatenate) # out: (none, 1600)
+    # my_concatenate = Flatten()(my_concatenate)
+    # my_concatenate = Dense(100)(my_concatenate)
+    pre = Dense(2,activation='softmax')(my_concatenate)
+    model = Model(model_input, pre)
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    return model
+
 
 
 def erect_3branch_model():
@@ -357,10 +378,7 @@ def erect_3branch_model():
     my_concatenate = Concatenate(axis=-2)([conca0, conca1,conca2])
     from atten_layer import self_attention,alpha_attention,AttentionLayer
     my_concatenate = AttentionLayer()(my_concatenate) # out: (none, 1600)
-
     # my_concatenate = Flatten()(my_concatenate)
-    print('my_concatenate.shape after Flatten', my_concatenate.shape)
-
     # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)

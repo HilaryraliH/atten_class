@@ -1,15 +1,20 @@
 
 
-# model_names, select_chan_way, dataformat_list,chans,chans_num 都具有相同的长度
+# 分支模型时，model_names, select_chan_way, dataformat_list,chans,chans_num 都具有相同的长度
+# 一个模型时，model_names只有一个，但select_chan_way可以有多个（因为要选择多个数据一起），但此时input_way一定时together
 is_plot_model = True # 在1080上，改为 False
-model_names = ['JNE_CNN_SEBlock']  # 先改只有一个模型融合的情况
-select_chan_way = ['9'] # 每个分支对应的输入数据
-input_way = 'together' # branch together 一起 或者 分支
+model_names = ['EEGNet']*5  # 先改只有一个模型融合的情况
+select_chan_way = ['9']*5 # 每个分支对应的输入数据
+data_dir = '.\\new_data\\TestDataCell_'
+band_pass = True
+data_file_list = [data_dir+'05_4.mat',data_dir+'4_8.mat',data_dir+'8_12.mat',data_dir+'12_30.mat',data_dir+'30_40.mat']
+input_way = 'branch' # branch together 一起 或者 分支
 sample_points = 200
 total_times=1
 epochs = 3
 batch_size = 32
 total_sub_num = 8
+
 
 area_to_elecs = {
     'EOG':[1, 6],

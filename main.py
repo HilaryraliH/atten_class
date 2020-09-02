@@ -14,7 +14,7 @@ for once in range(total_times):
 
     # 定义变量
     start = time()
-    root_dir, save_dir = mk_save_dir(model_names,input_way, once)
+    root_dir, save_dir = mk_save_dir(once)
     acc_list = []
     confu_matrix = None  # use to save_to_csv
     confu_matri = None  # use to calculate aver_confu_mat
@@ -31,12 +31,11 @@ for once in range(total_times):
         model = None
 
         # erect model
-        if len(model_names)==3:
-            model = erect_3branch_model()
-        if len(model_names)==2:
-            model= erect_2branch_model()
         if len(model_names)==1:
             model = erect_1branch_model()
+        else:
+            # model = erect_n_branch_model()
+            model = erect_n_branch_model_with_attention()
 
         # show model
         if sub == 0 and once == 0:

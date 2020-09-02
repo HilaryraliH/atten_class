@@ -6,14 +6,21 @@ from keras import backend as K
 import numpy as np
 from config import *
 
-def load_one_sub(sub,chan,dataformat):
+def load_one_sub(sub,chan,dataformat,datafile):
     # '2D':eletrodes_to_chans  (1,200,9)
     # '3D':eletrodes_to_high   (9,200,1)
 
     # load total data
-    file = sio.loadmat('new_data\\TestDataCell_62.mat')
-    data = file['Data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
-    label = file['Label']  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
+    if band_pass:
+        label_file = sio.loadmat(data_dir+'62.mat')
+
+        data_file = sio.loadmat(datafile)
+        data = data_file['total_data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
+        label = label_file['Label']  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
+    else:
+        file = sio.loadmat(data_dir+'62.mat')
+        data = file['Data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
+        label = file['Label']
 
     # extract test data
     tmp = data[0, sub]  # (200, 62, 1198)
@@ -79,22 +86,26 @@ def load_sub(sub):
     # 每个分支的输入组成一个列表返回
     Train_x =  []
     Test_x = []
-    for i,chan in enumerate(chans):
-        (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chan,dataformat_list[i])
-        print('shape before together')
-        print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
-        Train_x.append(train_x)
-        Train_y= train_y
-        Test_x.append(test_x)
-        Test_y = test_y
+    
+    # 如果多个分支都是一样的, 通道选择和数据
+    if len(set(select_chan_way))==1 and len(set(data_file_list))==1:
+        (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans[0],dataformat_list[0],data_file_list[0])
+        Train_x = [train_x]*len(select_chan_way)
+        Test_x = [test_x]*len(select_chan_way)
+    else:
+        for i,chan in enumerate(chans):
+            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chan,dataformat_list[i],data_file_list[i])
+            print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
+            Train_x.append(train_x)
+            Train_y= train_y
+            Test_x.append(test_x)
+            Test_y = test_y
 
-    # 若为一个分支，则按实际来加，但也作为list返回；若为多个分支，则按list返回
+    # 若为一个分支，则按实际来加，但也作为list返回
     if input_way == 'together':
         if dataformat_list[0]=='2D':
             Train_x = [np.concatenate([valu for valu in Train_x], axis=1)]
             Test_x = [np.concatenate([valu for valu in Test_x], axis=1)]
-            
-
         if dataformat_list[0]=='3D':
             Train_x = [np.concatenate([valu for valu in Train_x], axis=-1)]
             Test_x = [np.concatenate([valu for valu in Test_x], axis=-1)]
@@ -113,10 +124,14 @@ def check_path(dir):
             return
 
 
-def mk_save_dir(model_name,input_way, once):
+def mk_save_dir(once):
     save_dir = None
     root_dir = None
-    root_dir = 'results\\' + str(model_name) + str(select_chan_way)+input_way+ '\\'
+    if band_pass:
+        is_band_pass = 'bandpass'
+    else:
+        is_band_pass = None
+    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+input_way+ '_'+str(is_band_pass)+'\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)
