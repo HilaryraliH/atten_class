@@ -142,7 +142,13 @@ def mk_save_dir(once):
         is_band_pass = 'bandpass'
     else:
         is_band_pass = ''
-    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+'\\'
+
+    if attention_mechanism:
+        is_attention_mechanism = 'attention'
+    else:
+        is_attention_mechanism = ''
+
+    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)
