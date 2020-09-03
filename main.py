@@ -32,10 +32,12 @@ for once in range(total_times):
 
         # erect model
         if len(model_names)==1:
-            model = erect_1branch_model()
+            model = erect_single_model()
         else:
-            model = erect_n_branch_model()
-            # model = erect_n_branch_model_with_attention()
+            if is_attention_mechanism: # 融合时，加不加注意力机制
+                model = erect_n_branch_model_with_attention()
+            else:
+                model = erect_n_branch_model()
 
         # show model
         if sub == 0 and once == 0:

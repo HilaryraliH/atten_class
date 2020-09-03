@@ -20,7 +20,7 @@ def load_one_sub(sub,chan,dataformat,datafile):
         label = label_file['Label']  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
     else:
         file = sio.loadmat(data_dir+'62.mat')
-        print('load data from {}'.format(data_dir + '62.mat'))
+        print('load data and lable from {}'.format(data_dir + '62.mat'))
         data = file['Data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
         label = file['Label']
 
@@ -91,7 +91,6 @@ def load_sub(sub):
     Test_x = []
     Train_y = []
     Test_y = []
-
     
     if band_pass:
         # 先提取出每个bandpass的数据，组成一个列表：5*（8090，9，200，1）
@@ -139,8 +138,8 @@ def mk_save_dir(once):
     if band_pass:
         is_band_pass = 'bandpass'
     else:
-        is_band_pass = None
-    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+input_way+ '_'+str(is_band_pass)+'\\'
+        is_band_pass = ''
+    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+'\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)

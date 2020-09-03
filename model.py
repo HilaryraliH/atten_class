@@ -310,10 +310,8 @@ def get_model_input(dataformat,chan_num):
         model_input = Input(shape=(chan_num,sample_points))
     return model_input
 
-def erect_1branch_model():
+def erect_single_model():
     chan_num = np.sum(np.array(chans_num))
-    if band_pass:
-        chan_num = chan_num*band_pass_num
     model_input = get_model_input(dataformat_list[0],chan_num)
     model = eval(model_names[0])(model_input,chan_num)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])

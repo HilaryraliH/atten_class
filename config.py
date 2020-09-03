@@ -41,23 +41,25 @@ bandpass：
 2.一个模型，多个分支输入（数据分支，并不是通道分支）
 '''
 
-is_plot_model = False # 在1080上，改为 False
-model_names = ['DeepConvNet','Proposed_Conv_R'] # 先改只有一个模型融合的情况
-select_chan_way = ['F_C_9','F_C_9'] # 每个分支对应的输入数据
-data_dir = '.\\new_data\\TestDataCell_'
-band_pass = False
-band_pass_num = 5
-input_way = 'together' # branch together 一起 或者 分支
+is_plot_model = True # 在1080上，改为 False
+model_names = ['EEGNet']
+select_chan_way = ['9']*5 # 每个分支对应的输入数据; 
+# 当bandpass=True时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
+band_pass = True
+is_attention_mechanism = False
 
+
+band_pass_num = 5 # 滤波的数量
 sample_points = 200
 total_times=1
-epochs = 30
+epochs = 1
 batch_size = 32
 total_sub_num = 8
-
+data_dir = '.\\new_data\\TestDataCell_'
 data_file_list = [data_dir+'62.mat']
 if band_pass:
     data_file_list = [data_dir+'05_4.mat',data_dir+'4_8.mat',data_dir+'8_12.mat',data_dir+'12_30.mat',data_dir+'30_40.mat']
+
 # 其种类要看modelname，其数量要和select_chan_way 一样
 dataformat_list = [] 
 for name in model_names: # 种类
