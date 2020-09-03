@@ -359,54 +359,6 @@ def erect_n_branch_model_with_attention():
 
 
 
-def erect_3branch_model():
-    model_input0 = get_model_input(dataformat_list[0],chans_num[0])
-    model_input1 = get_model_input(dataformat_list[1],chans_num[1])
-    model_input2 = get_model_input(dataformat_list[2],chans_num[2])
-
-    model0 = eval(model_names[0])(model_input0,chans_num[0])
-    model1 = eval(model_names[1])(model_input1,chans_num[1])
-    model2 = eval(model_names[2])(model_input2,chans_num[2])
-    model_input = [model_input0, model_input1,model_input2]
-
-    def expand(x):
-        x = K.expand_dims(x, axis=-2)
-        return x
-    expand_layer = Lambda(expand)
-    conca0 = expand_layer(model0.layers[-3].output)
-    conca1 = expand_layer(model1.layers[-3].output)
-    conca2 = expand_layer(model2.layers[-3].output)
-
-    my_concatenate = Concatenate(axis=-2)([conca0, conca1,conca2])
-    from atten_layer import self_attention,alpha_attention,AttentionLayer
-    my_concatenate = AttentionLayer()(my_concatenate) # out: (none, 1600)
-    # my_concatenate = Flatten()(my_concatenate)
-    my_concatenate = Dense(100)(my_concatenate)
-    pre = Dense(2,activation='softmax')(my_concatenate)
-    model = Model(model_input, pre)
-
-    Adam = optimizers.adam(learning_rate=0.001,decay=1e-6)
-    model.compile(loss='categorical_crossentropy', optimizer=Adam, metrics=['accuracy'])
-    return model
-
-
-#%% 之前不对的注意力机制
-# #keras.layers.Lambda(function, output_shape=None, mask=None, arguments=None)
-#     def expand(x):
-#         x = K.expand_dims(x, axis=-1)
-#         return x
-#     expand_layer = Lambda(expand)
-#     print('my_concatenate.shape  after concatenate',my_concatenate.shape)
-#     my_concatenate = expand_layer(my_concatenate)
-#     print('my_concatenate.shape after reshape', my_concatenate.shape)
-#     from atten_layer import self_attention
-#     my_concatenate = self_attention(1)(my_concatenate)
-#     print('my_concatenate.shape after self_attention', my_concatenate.shape)
-
-#     my_concatenate = Flatten()(my_concatenate)
-#     print('my_concatenate.shape after Flatten', my_concatenate.shape)
-
-
 
 
 
