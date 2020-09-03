@@ -62,6 +62,7 @@ def load_one_sub(sub,chan,dataformat,datafile):
     train_x = train_x[rand_inx]
     train_y = train_y[rand_inx]
     model_input1 = (train_x, train_y), (test_x, test_y)
+
     if dataformat == '3D':
         return model_input1
 
@@ -86,40 +87,51 @@ def load_sub(sub):
     Train_x =  []
     Test_x = []
     
-    # 如果多个分支都是一样的, 通道选择和数据
-    if len(set(select_chan_way))==1 and len(set(data_file_list))==1:
-        (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans[0],dataformat_list[0],data_file_list[0])
-        Train_x = [train_x]*len(select_chan_way)
-        Test_x = [test_x]*len(select_chan_way)
-    # 若一个模型，一种chans，但要所有bandpass的数据一起用，返回一个list数据
-    elif len(set(select_chan_way))==1 and band_pass:
+    if band_pass:
+        # 先提取出每个bandpass的数据，组成一个列表：5*（8090，9，200，1）
         for i in range(len(data_file_list)):
-            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans[0],dataformat_list[0],data_file_list[i])
+            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans_index[i],dataformat_list[i],data_file_list[i])
             print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
             Train_x.append(train_x)
             Train_y= train_y
             Test_x.append(test_x)
             Test_y = test_y
+        # 若5个一起输入
+        if len(model_names)==1:
+            if dataformat_list[0]=='2D':
+                Train_x = [np.concatenate([valu for valu in Train_x], axis=1)]
+                Test_x = [np.concatenate([valu for valu in Test_x], axis=1)]
+            if dataformat_list[0]=='3D':
+                Train_x = [np.concatenate([valu for valu in Train_x], axis=-1)]
+                Test_x = [np.concatenate([valu for valu in Test_x], axis=-1)]
+            print('shape after together')
+            print(Train_x[0].shape, Test_x[0].shape)
     else:
-        for i,chan in enumerate(chans):
-            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chan,dataformat_list[i],data_file_list[i])
-            print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
-            Train_x.append(train_x)
-            Train_y= train_y
-            Test_x.append(test_x)
-            Test_y = test_y
-
-    # 若为一个分支，则按实际来加，但也作为list返回
-    if input_way == 'together':
-        if dataformat_list[0]=='2D':
-            Train_x = [np.concatenate([valu for valu in Train_x], axis=1)]
-            Test_x = [np.concatenate([valu for valu in Test_x], axis=1)]
-        if dataformat_list[0]=='3D':
-            Train_x = [np.concatenate([valu for valu in Train_x], axis=-1)]
-            Test_x = [np.concatenate([valu for valu in Test_x], axis=-1)]
-        print('shape after together')
-        print(Train_x[0].shape, Test_x[0].shape)
-    return (Train_x,Train_y), (Test_x,Test_y)
+        # 如果多个分支都是一样的, 通道选择和数据
+        if len(set(select_chan_way))==1 and len(set(model_names))!=1:
+            (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chans_index[0],dataformat_list[0],data_file_list[0])
+            Train_x = [train_x]*len(select_chan_way)
+            Test_x = [test_x]*len(select_chan_way)
+        # 如果多个分支，每个分支不一样
+        else:
+            for i,chan in enumerate(chans_index):
+                (train_x, train_y), (test_x, test_y) = load_one_sub(sub,chan,dataformat_list[i],data_file_list[i])
+                print(train_x.shape,train_y.shape,test_x.shape,test_y.shape)
+                Train_x.append(train_x)
+                Train_y= train_y
+                Test_x.append(test_x)
+                Test_y = test_y
+        # 若为一个分支，则按实际来加，但也作为list返回
+        if len(model_names) == 1:
+            if dataformat_list[0]=='2D':
+                Train_x = [np.concatenate([valu for valu in Train_x], axis=1)]
+                Test_x = [np.concatenate([valu for valu in Test_x], axis=1)]
+            if dataformat_list[0]=='3D':
+                Train_x = [np.concatenate([valu for valu in Train_x], axis=-1)]
+                Test_x = [np.concatenate([valu for valu in Test_x], axis=-1)]
+            print('shape after together')
+            print(Train_x[0].shape, Test_x[0].shape)
+        return (Train_x,Train_y), (Test_x,Test_y)
 
 
 

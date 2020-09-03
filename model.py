@@ -300,7 +300,7 @@ def square(x):
 def log(x):
     return K.log(K.clip(x, min_value=1e-7, max_value=10000))
 
-#%% 建立多个融合的模型（2分支和3分支）
+#%% 建立多个融合的模型
 def get_model_input(dataformat,chan_num):
     if dataformat == '2D':
         model_input = Input(shape=(chan_num, sample_points, 1))
@@ -312,7 +312,7 @@ def get_model_input(dataformat,chan_num):
 
 def erect_1branch_model():
     chan_num = np.sum(np.array(chans_num))
-    if band_pass and input_way=='together':
+    if band_pass:
         chan_num = chan_num*band_pass_num
     model_input = get_model_input(dataformat_list[0],chan_num)
     model = eval(model_names[0])(model_input,chan_num)
