@@ -2,7 +2,6 @@
 import os
 import scipy.io as sio
 from keras.utils import to_categorical
-from keras import backend as K
 import numpy as np
 from config import *
 
@@ -14,16 +13,17 @@ def load_one_sub(sub,chan,dataformat,datafile):
     if band_pass:
         label_file_name = data_dir+'62.mat'
         data_file_name = datafile
-        print('load data form {}'.format(data_file_name))
-        print('load label from {}'.format(label_file_name))
-        data_file = sio.loadmat(data_file_name)
-        label_file = sio.loadmat(label_file_name)
-        data = data_file['total_data']  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
-        label = label_file['Label']  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
+        print('load data form \033[1;32;m{}\033[0m'.format(data_file_name))
+        print('load label from \033[1;32;m{}\033[0m'.format(label_file_name))
+        data_file = sio.loadmat(data_file_name)['TotalCell']
+        label_file = sio.loadmat(label_file_name)['TotalCell']
+        data = data_file['Data'][0,0]  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
+        label = label_file['Label'][0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
         # data = file['Data']  # 以前的数据的处理方式 (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
     else:
-        file = sio.loadmat(data_dir+'62.mat')['TotalCell']
-        print('load data and lable from {}'.format(data_dir + '62.mat'))
+        label_file_name = data_dir + '62.mat'
+        file = sio.loadmat(label_file_name)['TotalCell']
+        print('load data and lable from \033[1;32;m{}\033[0m'.format(label_file_name))
         data = file['Data'][0,0] # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
         label = file['Label'][0,0] # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 887)
 

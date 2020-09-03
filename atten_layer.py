@@ -2,7 +2,6 @@
 from keras import backend as Bk
 from keras.engine.topology import Layer
 from keras import initializers
-import numpy as np
 
 
 class self_attention(Layer):  # 输入：(samples, 46, 128) : 46个词，每一个128维 即一行是一个输入向量

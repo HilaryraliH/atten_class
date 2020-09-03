@@ -3,11 +3,10 @@ import numpy as np
 import keras.backend as K
 from keras.layers import *
 from keras.models import Model
-from keras import optimizers
 from keras.constraints import max_norm
-import os
 from config import *
 from keras.engine.topology import Layer
+from atten_layer import AttentionLayer
 
 Samples = 200
 
@@ -326,7 +325,7 @@ def erect_n_branch_model():
         model[i] = eval(model_names[i])(model_input[i],chans_num[i])
 
     my_concatenate = Concatenate()([model[i].layers[-3].output for i in range(len(model_names))])
-    my_concatenate = Dense(100)(my_concatenate)
+    # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2,activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -346,7 +345,6 @@ def erect_n_branch_model_with_attention():
         concaten[i] = Reshape((1,model[i].layers[-3].output_shape[-1]))(model[i].layers[-3].output)
 
     my_concatenate = Concatenate(axis=-2)([concaten[i] for i in range(len(model_names))])
-    from atten_layer import self_attention,alpha_attention,AttentionLayer
     my_concatenate = AttentionLayer()(my_concatenate) # out: (none, 1600)
     # my_concatenate = Flatten()(my_concatenate)
     # my_concatenate = Dense(100)(my_concatenate)

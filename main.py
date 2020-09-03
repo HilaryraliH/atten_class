@@ -2,10 +2,11 @@
 
 from time import time
 from data_pre import mk_save_dir,load_sub
-from save_info import *
 from train_model import fit_model, evaluate_model
-from keras.models import load_model
+from keras.utils import plot_model
+from save_info import *
 from model import *
+os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
 
 
 root_dir = None
@@ -43,11 +44,6 @@ for once in range(total_times):
         if sub == 0 and once == 0:
             model.summary()
         if is_plot_model:
-            import os
-            from keras.utils import plot_model
-            from config import *
-            from model import *
-            os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
             plot_model(model,to_file=root_dir+'model_structure.png',show_shapes=True)
             print('\n===================finish plot model image===================\n')
         print('\n===================== start training {}th fold ==========================\n'.format(sub))

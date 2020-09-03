@@ -13,7 +13,6 @@ model_to_dataformat = {
     'generate_lstmfcn':'true_2D'
 }
 
-
 area_to_elecs = {
     'EOG':[1, 6],
     'F':[3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -42,17 +41,17 @@ bandpass：
 '''
 
 is_plot_model = False # 在1080上，改为 False
-model_names = ['EEGNet']
-select_chan_way = ['9'] # 每个分支对应的输入数据;
+model_names = ['EEGNet']*5
+select_chan_way = ['9']*5 # 每个分支对应的输入数据;
 # 当bandpass=True时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
-band_pass = False
+band_pass = True
 is_attention_mechanism = False
 
 
 band_pass_num = 5 # 滤波的数量
 sample_points = 200
 total_times=1
-epochs = 30
+epochs = 50
 batch_size = 32
 total_sub_num = 8
 data_dir = '.\\new_data\\TestDataCell_'
@@ -60,7 +59,7 @@ data_file_list = [data_dir+'62.mat']
 if band_pass:
     data_file_list = [data_dir+'05_4.mat',data_dir+'4_8.mat',data_dir+'8_12.mat',data_dir+'12_30.mat',data_dir+'30_40.mat']
 
-# 其种类要看modelname，其数量要和select_chan_way 一样
+
 dataformat_list = [] 
 for name in model_names: # 种类
     dataformat_list += [model_to_dataformat[name]]
@@ -72,7 +71,4 @@ chans_num = []
 for i,key in enumerate(select_chan_way):
     chans_index[i] = area_to_elecs[key]
     chans_num += [len(chans_index[i])]
-# select_chan_way，dataformat_list，chans，chans_num都具有一样的长度
-# model 只有一个时，input-way肯定时together
-# model 有多个时，input-way肯定是branch
-# 有bandpass时，要么5个分支，要么一个模型（数据一起）
+
