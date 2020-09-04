@@ -24,7 +24,7 @@ for once in range(total_times):
     save_model_dir = None
     info_dict = {}
 
-    for sub in range(7,8):
+    for sub in range(total_sub_num):
 
         # 定义每次循环一个sub的变量
         save_model_dir = save_dir + str(sub) + '.h5'
