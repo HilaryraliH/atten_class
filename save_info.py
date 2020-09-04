@@ -59,7 +59,7 @@ def save_training_pic(sub, hist, save_dir):
     metric = 'accuracy'
     plt.plot(hist.history[metric])
     plt.plot(hist.history['val_' + metric])
-    plt.title('model ' + metric)
+    plt.title('model ' + metric + 'val_'+ metric+':'+str( hist.history['val_' + metric][-1]))
     plt.ylabel(metric, fontsize='large')
     plt.xlabel('epoch', fontsize='large')
     plt.legend(['train', 'val'], loc='upper left')

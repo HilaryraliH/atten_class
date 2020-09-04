@@ -93,7 +93,7 @@ class AttentionLayer(Layer):
     def build(self, input_shape):
         assert len(input_shape)==3
         # W.shape = (time_steps, time_steps)
-        self.W = self.add_weight(name='att_weight', 
+        self.W = self.add_weight(name='att_weight',
                                  shape=(input_shape[1], input_shape[1]),
                                  initializer='uniform',
                                  trainable=True)

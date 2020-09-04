@@ -4,6 +4,7 @@ from time import time
 from data_pre import mk_save_dir,load_sub
 from train_model import fit_model, evaluate_model
 from keras.utils import plot_model
+from keras.models import load_model
 from save_info import *
 from model import *
 os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
@@ -23,7 +24,7 @@ for once in range(total_times):
     save_model_dir = None
     info_dict = {}
 
-    for sub in range(total_sub_num):
+    for sub in range(7,8):
 
         # 定义每次循环一个sub的变量
         save_model_dir = save_dir + str(sub) + '.h5'
@@ -35,7 +36,7 @@ for once in range(total_times):
         if len(model_names)==1:
             model = erect_single_model()
         else:
-            if is_attention_mechanism: # 融合时，加不加注意力机制
+            if attention_mechanism: # 融合时，加不加注意力机制
                 model = erect_n_branch_model_with_attention()
             else:
                 model = erect_n_branch_model()
