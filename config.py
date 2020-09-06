@@ -40,18 +40,18 @@ bandpass：
 2.一个模型，多个分支输入（数据分支，并不是通道分支）
 '''
 
-is_plot_model = True # 在1080上，改为 False
-model_names = ['DeepConvNet']*5
-select_chan_way = ['9']*5 # 每个分支对应的输入数据;
+is_plot_model = False # 在1080上，改为 False
+model_names = ['DeepConvNet']*3
+select_chan_way = ['P_left','P_mid','P_right'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
-band_pass = True
+band_pass = False
 attention_mechanism = True
 
 
 band_pass_num = 5 # 滤波的数量
 sample_points = 200
 total_times=1
-epochs = 1
+epochs = 30
 batch_size = 32
 total_sub_num = 8
 data_dir = '.\\new_data\\TestDataCell_'
