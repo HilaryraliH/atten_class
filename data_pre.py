@@ -148,7 +148,7 @@ def mk_save_dir(once):
     else:
         is_attention_mechanism = ''
 
-    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'\\'
+    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'_'+mak_dir_other_info+'\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)
