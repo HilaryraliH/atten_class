@@ -18,8 +18,9 @@ def fit_model(model,X_train, Y_train, X_test, Y_test, save_model_dir):
     #         lr=0.01
     #     return lr
 
+    # callbacks = [change_lr],
+
     # change_lr = LearningRateScheduler(scheduler,verbose=1)
-    # ,callbacks=[change_lr]
     hist = model.fit(X_train, Y_train,
                         batch_size=batch_size, epochs=epochs, verbose=2,
                         validation_data=(X_test, Y_test))

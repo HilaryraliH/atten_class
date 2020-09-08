@@ -11,19 +11,14 @@ def load_one_sub(sub,chan,dataformat,datafile):
 
     # load total data
     if band_pass:
-        label_file_name = data_dir+'62.mat'
-        data_file_name = datafile
-        print('load data form \033[1;32;m{}\033[0m'.format(data_file_name))
-        print('load label from \033[1;32;m{}\033[0m'.format(label_file_name))
-        data_file = sio.loadmat(data_file_name)['TotalCell']
-        label_file = sio.loadmat(label_file_name)['TotalCell']
+        print('Bandpass: load data and label from \033[1;32;m{}\033[0m'.format(datafile))
+        data_file = sio.loadmat(datafile)['TotalCell']
         data = data_file['Data'][0,0]  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
-        label = label_file['Label'][0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
+        label = data_file['Label'][0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
         # data = file['Data']  # 以前的数据的处理方式 (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
     else:
-        label_file_name = data_dir + '62.mat'
-        file = sio.loadmat(label_file_name)['TotalCell']
-        print('load data and lable from \033[1;32;m{}\033[0m'.format(label_file_name))
+        file = sio.loadmat(datafile)['TotalCell']
+        print('load data and label from \033[1;32;m{}\033[0m'.format(datafile))
         data = file['Data'][0,0] # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
         label = file['Label'][0,0] # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 887)
 
@@ -149,6 +144,7 @@ def mk_save_dir(once):
         is_attention_mechanism = ''
 
     root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'_'+mak_dir_other_info+'\\'
+    # root_dir = 'results\\' + str('[9个Pro_R分支]') + str('separate_9') + '_' + is_band_pass + '_' + is_attention_mechanism + '_' + mak_dir_other_info + '\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)

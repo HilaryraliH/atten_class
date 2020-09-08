@@ -367,7 +367,7 @@ def erect_n_branch_model():
 
     my_concatenate = Concatenate()(
         [model[i].layers[-3].output for i in range(len(model_names))])
-    my_concatenate = Dense(100)(my_concatenate)
+    # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2, activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy',
