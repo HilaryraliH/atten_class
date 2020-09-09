@@ -397,15 +397,18 @@ def erect_share_model():
     '''最终的 share-model'''
     # 建立 share-model
     share_model = EEGNet_share_part(model_input[0], chans_num[0])
-    # 左右输入
+    # 分支输入
     out_list = [None]*len(chans_num)
     for i in range(len(chans_num)):
         out_list[i] = share_model(model_input[i])
 
     my_concatenate = Concatenate()(out_list)
     dense = Dense(2,  kernel_constraint=max_norm(0.25))(my_concatenate)
+    model = Model(model_input, dense)
+    model.compile(loss='categorical_crossentropy',
+                  optimizer='adam', metrics=['accuracy'])
     
-    return Model(model_input, dense)
+    return model
 
 
 
