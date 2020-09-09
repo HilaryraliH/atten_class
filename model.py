@@ -156,7 +156,23 @@ def Proposed_Conv_R(model_input, Chans, nb_classes=2):
     return Model(inputs=model_input, outputs=preds)
 
 # %% 输入为2D（chans，200，1）的模型
+def EEGNet_share_part(model_input, Chans, nb_classes=2, dropoutRate=0.5, kernLength=64, F1=8, D=2, F2=16, norm_rate=0.25):
+    block1 = Conv2D(F1, (1, kernLength), padding='same', input_shape=(Chans, Samples, 1), use_bias=False)(model_input)
+    block1 = BatchNormalization()(block1)  # I'm not sure the axis, axis=1 before
 
+    block1 = DepthwiseConv2D((Chans, 1), use_bias=False,depth_multiplier=D, depthwise_constraint=max_norm(1.))(block1)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('elu')(block1)
+    block1 = AveragePooling2D((1, 4))(block1)
+    block1 = Dropout(dropoutRate)(block1)
+
+    block2 = SeparableConv2D(F2, (1, 16), use_bias=False, padding='same')(block1) 
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('elu')(block2)
+    block2 = AveragePooling2D((1, 8))(block2)
+    block2 = Dropout(dropoutRate)(block2)
+    flatten = Flatten()(block2)
+    return Model(inputs=model_input, outputs=flatten)
 
 def EEGNet(model_input, Chans, nb_classes=2, dropoutRate=0.5, kernLength=64, F1=8, D=2, F2=16, norm_rate=0.25):
     # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
@@ -173,7 +189,7 @@ def EEGNet(model_input, Chans, nb_classes=2, dropoutRate=0.5, kernLength=64, F1=
     block1 = Dropout(dropoutRate)(block1)
 
     block2 = SeparableConv2D(F2, (1, 16), use_bias=False, padding='same')(
-        block1)  # it's（1，16）before
+        block1) 
     block2 = BatchNormalization()(block2)
     block2 = Activation('elu')(block2)
     block2 = AveragePooling2D((1, 8))(block2)
@@ -364,6 +380,34 @@ def get_model_input(dataformat, chan_num):
     elif dataformat == 'true_2D':
         model_input = Input(shape=(chan_num, sample_points))
     return model_input
+
+
+def erect_share_model():
+    model_input = [None]*len(select_chan_way)
+    for i in range(len(chans_num)):
+        model_input[i] = get_model_input(dataformat_list[i], chans_num[i])
+    # 因每个输入的channal不同，所以当模型中只有卷积的时候，才能共享，若包含全连接，则不能共享
+    # 此处可以将EEGNet的卷积部分提出来共享，后面再接上相同的结构，再融合
+    # 建立EEGNet，注意此时的输入，在channel的维度为none（但这样就不能建立EEGNet了呀，是需要chan这个具体参数的）
+    # 所以最终还是对输入的几个分支形状做了调整，少了相应数目的channel，就可以直接共享了
+    '''输入 channal 不一样时的 share 思路'''
+    # 从EEGNet中提取出卷积部分，封装为一个共享层的模式
+    # 共享层接受多个输入
+    # 将多个输出进行连接，并进行分类
+    '''最终的 share-model'''
+    # 建立 share-model
+    share_model = EEGNet_share_part(model_input[0], chans_num[0])
+    # 左右输入
+    left_out = share_model(model_input[0])
+    right_out = share_model(model_input[1])
+
+    my_concatenate = Concatenate()([left_out,right_out])
+    dense = Dense(2,  kernel_constraint=max_norm(0.25))(my_concatenate)
+    
+    return Model(model_input, dense)
+
+
+
 
 
 def erect_single_model():

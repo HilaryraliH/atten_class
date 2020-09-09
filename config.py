@@ -30,9 +30,9 @@ area_to_elecs = {
     '9_7': [optimal_9[6]],
     '9_8': [optimal_9[7]],
     '9_9': [optimal_9[8]],
-    'P_left': [16, 44, 45, 46, 47, 48, 54, 55, 56, 59, 60],
+    'P_left': [16, 44, 45, 46, 47, 48, 54, 55, 59], # [16, 44, 45, 46, 47, 48, 54, 55, 56, 59, 60],
     'P_mid':  [48, 56, 60, 47, 55, 59, 49, 57, 61],
-    'P_right':[24, 48, 49, 50, 51, 52, 56, 57, 58, 60, 61]
+    'P_right':[24, 49, 50, 51, 52, 57, 58, 60, 61] # [24, 48, 49, 50, 51, 52, 56, 57, 58, 60, 61]
 }
 
 area_to_elecs['F_9'] = area_to_elecs['F']+area_to_elecs['9']
@@ -51,14 +51,15 @@ bandpass：
 2.一个模型，多个分支输入（数据分支，并不是通道分支）
 '''
 
-is_plot_model = False # 在1080上，改为 False
-model_names = ['DeepConvNet']
-select_chan_way = ['9']
+is_plot_model = True # 在1080上，改为 False
+model_names = ['EEGNet']
+select_chan_way = ['P_left','P_mid','P_right']
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
 band_pass = False
 attention_mechanism = False
-mak_dir_other_info = '只有4_30的'
+share_model = True # 当建立参数共享的模型时，为true，此时model_names只有一个，select_chan_way有多个
+mak_dir_other_info = '三个输入共享参数模型，基于4_40的'
 
 
 band_pass_num = 5 # 滤波的数量
@@ -68,7 +69,7 @@ epochs = 20
 batch_size = 32
 total_sub_num = 8
 data_dir = '.\\new_data\\TestDataCell_'
-data_file_list = [data_dir+'4_30.mat']
+data_file_list = [data_dir+'4_40.mat']
 if band_pass:
     # data_file_list = [data_dir+'05_4.mat',data_dir+'4_8.mat',data_dir+'8_12.mat',data_dir+'12_30.mat',data_dir+'30_40.mat']
     data_file_list = [data_dir+'05_40.mat',data_dir+'4_40.mat',data_dir+'8_40.mat',data_dir+'12_40.mat',data_dir+'30_40.mat']

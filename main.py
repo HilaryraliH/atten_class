@@ -39,7 +39,10 @@ for once in range(total_times):
             model = load_model(save_model_dir,custom_objects={'AttentionLayer':AttentionLayer})
         else:
             if len(model_names)==1:
-                model = erect_single_model()
+                if share_model:
+                    model = erect_share_model() # 现在的share-model代码只能基于EEGNet，还没有扩展到所有模型
+                else:
+                    model = erect_single_model()
             else:
                 if attention_mechanism: # 融合时，加不加注意力机制
                     model = erect_n_branch_model_with_attention()
