@@ -1,5 +1,6 @@
 
 model_to_dataformat = {
+    'Convention_2D':'2D',
     'EEGNet':'2D', 
     'ShallowConvNet':'2D',
     'DeepConvNet':'2D',
@@ -51,12 +52,13 @@ bandpass：
 '''
 
 is_plot_model = False # 在1080上，改为 False
-model_names = ['EEGNet']
-select_chan_way = ['9'] # 每个分支对应的输入数据;
+model_names = ['DeepConvNet']
+select_chan_way = ['9']
+# select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
 band_pass = False
 attention_mechanism = False
-mak_dir_other_info = '只用8-12的'
+mak_dir_other_info = '只有4_30的'
 
 
 band_pass_num = 5 # 滤波的数量
@@ -66,7 +68,7 @@ epochs = 20
 batch_size = 32
 total_sub_num = 8
 data_dir = '.\\new_data\\TestDataCell_'
-data_file_list = [data_dir+'8_12.mat']
+data_file_list = [data_dir+'4_30.mat']
 if band_pass:
     # data_file_list = [data_dir+'05_4.mat',data_dir+'4_8.mat',data_dir+'8_12.mat',data_dir+'12_30.mat',data_dir+'30_40.mat']
     data_file_list = [data_dir+'05_40.mat',data_dir+'4_40.mat',data_dir+'8_40.mat',data_dir+'12_40.mat',data_dir+'30_40.mat']

@@ -31,6 +31,24 @@ class SeBlock(Layer):
         # return inputs*x
 
 # %% 输入为3D（1，200，chans）的模型
+def Convention_2D(model_input, Chans, nb_classes=2):
+    # article: Inter-subject transfer learning with an end-to-end deep convolutional neural network for EEG-based BCI
+    # # remain unchanged
+    data = Conv2D(32, (1, 20), strides=(1, 2), activation='relu')(model_input)
+    data = MaxPooling2D(pool_size=(1, 2))(data)
+    data = BatchNormalization()(data)
+    data = Conv2D(16, (1, 10), activation='relu')(data)
+    data = BatchNormalization()(data)
+    data = Conv2D(8, (1, 5), activation='relu')(data)
+    data = Flatten()(data)
+    data = Dropout(0.2)(data)
+    data = Dense(50, activation='relu')(data)
+    data = Dropout(0.3)(data)
+    data = Dense(nb_classes, activation='softmax')(data)
+    model = Model(model_input, data)
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam', metrics=['accuracy'])
+    return model
 
 
 def JNE_CNN(model_input, Chans, nb_classes=2):
@@ -402,11 +420,11 @@ def erect_n_branch_model_with_attention():
         axis=-1)([concaten[i] for i in range(len(model_names))])
     my_concatenate = attach_attention_module(
         my_concatenate, 'cbam_block')  # se_block or cbam_block
-    my_concatenate = Conv2D(1, (1, 20),padding='same', activation='relu')(my_concatenate)
+    # my_concatenate = Conv2D(1, (1, 20),padding='same', activation='relu')(my_concatenate)
     # my_concatenate = MaxPool2D((1,3))(my_concatenate)
     my_concatenate = Flatten()(my_concatenate)
 
-    my_concatenate = Dense(100)(my_concatenate)
+    # my_concatenate = Dense(100)(my_concatenate)
     pre = Dense(2, activation='softmax')(my_concatenate)
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy',

@@ -68,8 +68,8 @@ def load_one_sub(sub,chan,dataformat,datafile):
         return model_input1
 
     # change shape from (1,200,chans_num) to (chans_num，200)
-    train_x = np.swapaxes(np.squeeze(train_x), 1, 2)  
-    test_x = np.swapaxes(np.squeeze(test_x), 1, 2)
+    train_x = np.swapaxes(np.squeeze(train_x,axis=1), 1, 2)
+    test_x = np.swapaxes(np.squeeze(test_x,axis=1), 1, 2)
     model_input2 = (train_x, train_y), (test_x, test_y)
     if dataformat == 'true_2D':
         return model_input2
@@ -144,7 +144,7 @@ def mk_save_dir(once):
         is_attention_mechanism = ''
 
     root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'_'+mak_dir_other_info+'\\'
-    # root_dir = 'results\\' + str('[9个Pro_R分支]') + str('separate_9') + '_' + is_band_pass + '_' + is_attention_mechanism + '_' + mak_dir_other_info + '\\'
+    # root_dir = 'results\\' + str('[9个Convention_2D分支]') + str('separate_9') + '_' + is_band_pass + '_' + is_attention_mechanism + '_' + mak_dir_other_info + '\\'
     save_dir = root_dir + '第{}次'.format(once) + '\\'
     check_path(save_dir)
     check_path(root_dir)
