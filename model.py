@@ -383,7 +383,7 @@ def get_model_input(dataformat, chan_num):
 
 
 def erect_share_model():
-    model_input = [None]*len(select_chan_way)
+    model_input = [None]*len(chans_num)
     for i in range(len(chans_num)):
         model_input[i] = get_model_input(dataformat_list[i], chans_num[i])
     # 因每个输入的channal不同，所以当模型中只有卷积的时候，才能共享，若包含全连接，则不能共享
@@ -398,10 +398,11 @@ def erect_share_model():
     # 建立 share-model
     share_model = EEGNet_share_part(model_input[0], chans_num[0])
     # 左右输入
-    left_out = share_model(model_input[0])
-    right_out = share_model(model_input[1])
+    out_list = [None]*len(chans_num)
+    for i in range(len(chans_num)):
+        out_list[i] = share_model(model_input[i])
 
-    my_concatenate = Concatenate()([left_out,right_out])
+    my_concatenate = Concatenate()(out_list)
     dense = Dense(2,  kernel_constraint=max_norm(0.25))(my_concatenate)
     
     return Model(model_input, dense)
