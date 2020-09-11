@@ -17,46 +17,33 @@ def load_one_sub(sub,chan,dataformat,datafile):
         label = data_file['Label'][0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
         # data = file['Data']  # 以前的数据的处理方式 (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
     else:
-        file = sio.loadmat(datafile)['TotalCell']
+        file = sio.loadmat(datafile)#['TotalCell']
         print('load data and label from \033[1;32;m{}\033[0m'.format(datafile))
-        data = file['Data'][0,0] # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
-        label = file['Label'][0,0] # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 887)
+        data = file['Data']#[0,0] # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
+        label = file['Label']#[0,0] # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 887)
 
     # extract test data
     tmp = data[0, sub]  # (200, 62, 1198)
     tmp = tmp[:,chan,:] # (200, chans, 1198)
-    nums = tmp.shape[2]
-    test_x = np.zeros((nums, 1, tmp.shape[0], tmp.shape[1]))
-    for j in range(nums):
-        test_x[j, 0, :, :] = tmp[:, :, j]
-    test_y = label[0, sub].reshape((tmp.shape[2], 1))
-    test_y = to_categorical(test_y)
+    test_x = np.expand_dims(np.transpose(tmp,(2,0,1)),axis=1) #(1198,1,200, chans)
+    test_y = to_categorical(label[0, sub].reshape((tmp.shape[2], 1)))
 
     # extract training data
-    total_nums = 0
-    chans_num = 0
-    for j in range(total_sub_num):
-        tmp_train = data[0, j]
-        tmp_train = tmp_train[:,chan,:]  # (200, chans, 1198)
-        chans_num = tmp_train.shape[1]
-        if j != sub:
-            total_nums += tmp_train.shape[2]
-    train_x = np.zeros((total_nums, 1, 200, chans_num))
-    train_y = np.zeros((total_nums,))
-    indx = 0
-    for j in range(total_sub_num):
-        tmp_train = data[0, j]
-        tmp_train = tmp_train[:,chan,:]  # (200, chans, 1198)
-        if j != sub:
-            tmp_x = tmp_train  # (200, chans, 1198)
-            tmp_y = label[0, j]  # (1, 1198)
-            nums = tmp_x.shape[2]
-            for k in range(nums):
-                train_x[indx, 0, :, :] = tmp_x[:, :, k]
-                train_y[indx] = tmp_y[0, k]
-                indx += 1
-    train_y = train_y.reshape((total_nums, 1))
-    train_y = to_categorical(train_y)
+    train_x = None
+    train_y = None
+    train_sub_range = [i for i in range(0,sub)] + [j for j in range(sub+1,total_sub_num)]
+    for i in train_sub_range:
+        tmp = data[0,i]
+        tmp = tmp[:,chan,:]
+        tmp_l = label[0,i]
+        if train_x is None:
+            train_x = tmp
+            train_y = tmp_l
+        else:
+            train_x = np.concatenate([train_x,tmp],axis=2)
+            train_y = np.concatenate([train_y,tmp_l],axis=1)
+    train_x = np.transpose(np.expand_dims(train_x,axis=0),(3,0,1,2))
+    train_y = to_categorical(np.squeeze(train_y,axis=0))
 
     # 打乱数据 (1,200,chans_num)
     rand_inx = np.random.permutation(range(train_x.shape[0]))  

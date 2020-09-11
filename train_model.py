@@ -11,9 +11,9 @@ def fit_model(model,X_train, Y_train, X_test, Y_test, save_model_dir):
     def scheduler(epoch):
         # 以前的变化：start：0.01  >10epoch：0.001 >20epoch：0.0005
         # 现在：每10个epoch降低0.25倍的学习率
-        init_lr = 0.001
+        init_lr = 0.01
         factor = 0.25
-        dropEvery = 10
+        dropEvery = 20
         exp = np.floor((1 + epoch) / dropEvery)
         lr = init_lr * (factor ** exp)
         return lr
