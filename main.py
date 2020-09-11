@@ -1,15 +1,15 @@
 # coding=utf-8
 
 from time import time
-from data_pre import mk_save_dir, load_sub
+from data_pre import mk_save_dir,load_sub
 from train_model import fit_model, evaluate_model
 from keras.utils import plot_model
 from keras.models import load_model
 from save_info import *
 from model import *
 from atten_layer import AttentionLayer
-
 os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
+
 
 root_dir = None
 total_confu_matrix = None
@@ -36,14 +36,14 @@ for once in range(total_times):
 
         # erect model
         if os.path.exists(save_model_dir):
-            model = load_model(save_model_dir, custom_objects={'AttentionLayer': AttentionLayer})
+            model = load_model(save_model_dir,custom_objects={'AttentionLayer':AttentionLayer})
         else:
-            if len(model_names) == 1:
+            if len(model_names)==1:
                 model = erect_single_model()
             else:
                 if share_model:
-                    model = erect_share_model()  # 现在的share-model代码只能基于EEGNet，还没有扩展到所有模型
-                elif attention_mechanism:  # 融合时，加不加注意力机制
+                    model = erect_share_model() # 现在的share-model代码只能基于EEGNet，还没有扩展到所有模型
+                elif attention_mechanism: # 融合时，加不加注意力机制
                     model = erect_n_branch_model_with_attention()
                 else:
                     model = erect_n_branch_model()
@@ -52,13 +52,13 @@ for once in range(total_times):
         if sub == 0 and once == 0:
             model.summary()
         if is_plot_model:
-            plot_model(model, to_file=root_dir + 'model_structure.png', show_shapes=True)
+            plot_model(model,to_file=root_dir+'model_structure.png',show_shapes=True)
             print('\n===================finish plot model image===================\n')
         print('\n===================== start training {}th fold ==========================\n'.format(sub))
 
         # load data
         print('loading sub {} data'.format(sub))
-        (X_train, Y_train), (X_test, Y_test) = load_sub(sub)  # load data
+        (X_train, Y_train), (X_test, Y_test) = load_sub(sub) # load data
 
         # fit model
         if os.path.exists(save_model_dir):
@@ -77,15 +77,15 @@ for once in range(total_times):
 
         del X_train, Y_train, X_test, Y_test
         import gc
-
         gc.collect()
 
     # save to file
     end = time()
     training_time = (end - start) / 3600
-    total_confu_matrix = my_append_col(total_confu_matrix, confu_matrix)
+    total_confu_matrix = my_append_col(total_confu_matrix,confu_matrix)
     info_dict['training_time'] = str(training_time) + ' hours'
     save_acc_pic(acc_list, save_dir)
     save_csv(confu_matrix, save_dir)
     save_txt(info_dict, save_dir)
-save_total_csv(total_confu_matrix, root_dir)
+save_total_csv(total_confu_matrix,root_dir)
+
