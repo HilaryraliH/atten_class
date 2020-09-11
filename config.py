@@ -52,12 +52,13 @@ bandpass：
 2.一个模型，多个分支输入（数据分支，并不是通道分支）
 '''
 
-is_plot_model = True # 在1080上，改为 False
+is_plot_model = False # 在1080上，改为 False
 model_names = ['EEGNet_smaller']*5
 select_chan_way = ['9']*5 #,'P_mid','P_right'
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
 band_pass = True
+add_dense_100 = True
 attention_mechanism = False
 share_model = False # 当建立参数共享的模型时，为true，此时model_names也需要有“分支数量”个，但建立真的模型时，只建立一个
 mak_dir_other_info = ''
