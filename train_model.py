@@ -8,6 +8,7 @@ from config import *
 def fit_model(model,X_train, Y_train, X_test, Y_test, save_model_dir):
     hist=None
 
+<<<<<<< HEAD
     def scheduler(epoch):
         # 以前的变化：start：0.01  >10epoch：0.001 >20epoch：0.0005
         # 现在：每10个epoch降低0.25倍的学习率
@@ -17,10 +18,21 @@ def fit_model(model,X_train, Y_train, X_test, Y_test, save_model_dir):
         exp = np.floor((1 + epoch) / dropEvery)
         lr = init_lr * (factor ** exp)
         return lr
+=======
+    # def scheduler(epoch):
+    #     # 以前的变化：start：0.01  >10epoch：0.001 >20epoch：0.0005
+    #     # 现在：每10个epoch降低0.25倍的学习率
+    #     init_lr = 0.001
+    #     factor = 0.25
+    #     dropEvery = 10
+    #     exp = np.floor((1 + epoch) / dropEvery)
+    #     lr = init_lr * (factor ** exp)
+    #     return lr
+>>>>>>> 6d0611d835012984e20529328f393effcc38c78e
 
-    change_lr = LearningRateScheduler(scheduler,verbose=1)
+    #change_lr = LearningRateScheduler(scheduler,verbose=1)
     hist = model.fit(X_train, Y_train,
-                        batch_size=batch_size, epochs=epochs, verbose=2, callbacks = [change_lr],
+                        batch_size=batch_size, epochs=epochs, verbose=2,# callbacks = [change_lr],
                         validation_data=(X_test, Y_test))
     model.save(save_model_dir)
     return hist
