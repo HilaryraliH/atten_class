@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from time import time
-from data_pre import mk_save_dir,load_sub
+from data_pre import load_sub
 from train_model import fit_model, evaluate_model
 from keras.utils import plot_model
 from keras.models import load_model
@@ -9,16 +9,16 @@ from save_info import *
 from model import *
 from atten_layer import AttentionLayer
 os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
+from config import *
 
 
-root_dir = None
 total_confu_matrix = None
 for once in range(total_times):
 
     # 定义变量
     start = time()
-
-    root_dir, save_dir = mk_save_dir(once)
+    save_dir = root_dir + '第{}次'.format(once) + '\\'
+    check_path(save_dir)
     acc_list = []
     confu_matrix = None  # use to save_to_csv
     confu_matri = None  # use to calculate aver_confu_mat

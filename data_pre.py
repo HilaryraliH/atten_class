@@ -12,9 +12,9 @@ def load_one_sub(sub,chan,dataformat,datafile):
     # load total data
     if band_pass:
         print('Bandpass: load data and label from \033[1;32;m{}\033[0m'.format(datafile))
-        data_file = sio.loadmat(datafile)['TotalCell']
-        data = data_file['Data'][0,0]  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
-        label = data_file['Label'][0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
+        data_file = sio.loadmat(datafile)#['TotalCell']
+        data = data_file['Data']#[0,0]  # (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 886)
+        label = data_file['Label']#[0,0]  # (1, 8) (1, 1198) 下标为[0，4]的数据：(1, 886)
         # data = file['Data']  # 以前的数据的处理方式 (1, 8) (200, 62, 1198) 下标为[0，4]的数据：(200, 62, 887)
     else:
         file = sio.loadmat(datafile)#['TotalCell']
@@ -108,31 +108,4 @@ def load_sub(sub):
 
 
 
-def check_path(dir):
-    if not os.path.exists(dir):
-        try:
-            os.makedirs(dir)
-        except:
-            print('make dir error')
-            return
 
-
-def mk_save_dir(once):
-    save_dir = None
-    root_dir = None
-    if band_pass:
-        is_band_pass = 'bandpass'
-    else:
-        is_band_pass = ''
-
-    if attention_mechanism:
-        is_attention_mechanism = 'attention'
-    else:
-        is_attention_mechanism = ''
-
-    root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'_'+mak_dir_other_info+'\\'
-    # root_dir = 'results\\' + str('[9个Convention_2D分支]') + str('separate_9') + '_' + is_band_pass + '_' + is_attention_mechanism + '_' + mak_dir_other_info + '\\'
-    save_dir = root_dir + '第{}次'.format(once) + '\\'
-    check_path(save_dir)
-    check_path(root_dir)
-    return root_dir,save_dir
