@@ -232,8 +232,6 @@ def EEGNet_smaller(model_input, Chans, nb_classes=2, dropoutRate=0.5, kernLength
     return Model(inputs=model_input, outputs=softmax)
 
 
-
-
 def DeepConvNet(model_input, Chans, nb_classes=2, dropoutRate=0.5):
     # article: EEGNet: a compact convolutional neural network for EEG-based brain–computer interfaces
     # changed as the comments
@@ -402,15 +400,16 @@ def log(x):
     return K.log(K.clip(x, min_value=1e-7, max_value=10000))
 
 # %% 建立多个融合的模型
-
-
 def get_model_input(dataformat, chan_num):
-    if dataformat == '2D':
+    if is_3D:
+        model_input = Input(shape=(9,9,sample_points,1))
+    elif dataformat == '2D':
         model_input = Input(shape=(chan_num, sample_points, 1))
     elif dataformat == '3D':
         model_input = Input(shape=(1, sample_points, chan_num))
     elif dataformat == 'true_2D':
         model_input = Input(shape=(chan_num, sample_points))
+
     return model_input
 
 # 因每个输入的channal不同，所以当模型中只有卷积的时候，才能共享，若包含全连接，则不能共享
@@ -435,9 +434,6 @@ def erect_share_model():
                   optimizer='adam', metrics=['accuracy'])
     
     return model
-
-
-
 
 
 def erect_single_model():
@@ -503,4 +499,33 @@ def erect_n_branch_model_with_attention():
     model = Model(model_input, pre)
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam', metrics=['accuracy'])
+    return model
+
+
+def Three_D_model(model_input, chan_num):
+
+    block1 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    block2 = Conv3D(32,(2,2,3),strides=(2,2,2))(block1)
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('relu')(block2)
+
+    block3 = Conv3D(64,(2,2,3),strides=(2,2,2))(block2)
+    block3 = BatchNormalization()(block3)
+    block3 = Activation('relu')(block3)
+
+    flattened = Flatten()(block3)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put = Dense(2,activation='softmax')(dense2)
+
+    model = Model(model_input,out_put)
     return model

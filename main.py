@@ -1,7 +1,7 @@
 # coding=utf-8
 
 from time import time
-from data_pre import load_sub
+from data_pre import load_sub,load_sub_3D
 from train_model import fit_model, evaluate_model
 from keras.utils import plot_model
 from keras.models import load_model
@@ -58,7 +58,11 @@ for once in range(total_times):
 
         # load data
         print('loading sub {} data'.format(sub))
-        (X_train, Y_train), (X_test, Y_test) = load_sub(sub) # load data
+        if is_3D:
+            (X_train, Y_train), (X_test, Y_test) = load_sub_3D(sub)
+            
+        else:
+            (X_train, Y_train), (X_test, Y_test) = load_sub(sub) # load data
 
         # fit model
         if os.path.exists(save_model_dir):
