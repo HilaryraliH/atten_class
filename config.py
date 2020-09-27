@@ -34,7 +34,7 @@ model_to_dataformat = {
     'Time_branches_with_attention':'2D',
     'Spatial_Small_Three_D_model':'2D',
     'Spatial_Mid_Three_D_model':'2D',
-    'Spatial_Big_Three_D_model':'2D',
+    'Spatial_Large_Three_D_model':'2D',
     'Spatial_branches':'2D',
     'Time_branches_feature_concat':'2D',
     'Time_branches_feature_concat_attention':'2D'
@@ -84,7 +84,7 @@ def check_path(dir):
 ##############################
 
 is_plot_model = False# 在1080上，改为 False
-model_names = ['Spatial_Mid_Three_D_model']
+model_names = ['Spatial_Large_Three_D_model']
 select_chan_way = ['Simultaneous'] #,'P_mid','P_right'
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5

@@ -1010,7 +1010,7 @@ def Spatial_Mid_Three_D_model(model_input, chan_num):
 
 def Spatial_Large_Three_D_model(model_input, chan_num):
 
-    block1 = Conv3D(16,(4,4,5),strides=(2,2,4))(model_input)
+    block1 = Conv3D(16,(4,4,5),strides=(1,1,4))(model_input)
     block1 = BatchNormalization()(block1)
     block1 = Activation('relu')(block1)
 
@@ -1018,12 +1018,12 @@ def Spatial_Large_Three_D_model(model_input, chan_num):
     block2 = BatchNormalization()(block2)
     block2 = Activation('relu')(block2)
 
-    block3 = Conv3D(64,(4,4,3),strides=(1,1,2))(block2)
-    block3 = BatchNormalization()(block3)
-    block3 = Activation('relu')(block3)
+    # block3 = Conv3D(64,(4,4,3),strides=(1,1,2))(block2)
+    # block3 = BatchNormalization()(block3)
+    # block3 = Activation('relu')(block3)
 
-    flattened = Flatten()(block3)
-    dense1 = Dense(32)(flattened)
+    flattened = Flatten()(block2)
+    dense1 = Dense(100)(flattened)
     dense1 = BatchNormalization()(dense1)
     dense1 = Activation('relu')(dense1)
 
@@ -1064,15 +1064,15 @@ def Spatial_branches(model_input,chan_num):
 
 
     # mid
-    block4 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
+    block4 = Conv3D(16,(3,3,5),strides=(1,1,4))(model_input)
     block4 = BatchNormalization()(block4)
     block4 = Activation('relu')(block4)
 
-    block5 = Conv3D(32,(3,3,3),strides=(2,2,2))(block4)
+    block5 = Conv3D(32,(3,3,3),strides=(1,1,2))(block4)
     block5 = BatchNormalization()(block5)
     block5 = Activation('relu')(block5)
 
-    block6 = Conv3D(64,(3,3,3),strides=(2,2,2))(block5)
+    block6 = Conv3D(64,(3,3,3),strides=(1,1,2))(block5)
     block6 = BatchNormalization()(block6)
     block6 = Activation('relu')(block6)
 
@@ -1088,20 +1088,20 @@ def Spatial_branches(model_input,chan_num):
     out_put_mid = Dense(2,activation='softmax')(dense4)
 
     # big
-    block7 = Conv3D(16,(4,4,5),strides=(2,2,4))(model_input)
+    block7 = Conv3D(16,(4,4,5),strides=(1,1,4))(model_input)
     block7 = BatchNormalization()(block7)
     block7 = Activation('relu')(block7)
 
-    block8 = Conv3D(32,(4,4,3),strides=(2,2,2))(block7)
+    block8 = Conv3D(32,(4,4,3),strides=(1,1,2))(block7)
     block8 = BatchNormalization()(block8)
     block8 = Activation('relu')(block8)
 
-    block9 = Conv3D(64,(4,4,3),strides=(2,2,2))(block8)
-    block9 = BatchNormalization()(block9)
-    block9 = Activation('relu')(block9)
+    # block9 = Conv3D(64,(4,4,3),strides=(1,1,2))(block8)
+    # block9 = BatchNormalization()(block9)
+    # block9 = Activation('relu')(block9)
 
-    flattened = Flatten()(block9)
-    dense5 = Dense(32)(flattened)
+    flattened = Flatten()(block8)
+    dense5 = Dense(100)(flattened)
     dense5 = BatchNormalization()(dense5)
     dense5 = Activation('relu')(dense5)
 
