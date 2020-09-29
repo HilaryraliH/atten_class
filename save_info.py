@@ -12,24 +12,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 from config import *
 
+
 def my_append_row(total, one):
     if total is None:
         total = np.array(one)
     else:
-        total = np.append(total, one, axis=0)
+        total = np.append(np.array(total), one, axis=0)
     return total
+
 
 def my_append_col(total, one):
     if total is None:
         total = np.array(one)
     else:
-        total = np.append(total, one, axis=1)
+        total = np.append(np.array(total), one, axis=1)
     return total
+
+
 def my_append(total, one):
     if total is None:
         total = np.array(one)
     else:
-        total = np.append(total, one, axis=0)
+        total = np.append(np.array(total), one, axis=0)
     return total
 
 
@@ -59,7 +63,7 @@ def save_training_pic(sub, hist, save_dir):
     metric = 'accuracy'
     plt.plot(hist.history[metric])
     plt.plot(hist.history['val_' + metric])
-    plt.title('val_'+ metric+':'+str( hist.history['val_' + metric][-1]))
+    plt.title('val_' + metric + ':' + str(hist.history['val_' + metric][-1]))
     plt.ylabel(metric, fontsize='large')
     plt.xlabel('epoch', fontsize='large')
     plt.legend(['train', 'val'], loc='upper left')
@@ -94,20 +98,22 @@ def save_acc_pic(acc_list, save_dir):
 
 
 def save_csv(confu_matrix, save_dir):
-    np.savetxt(save_dir + '8sub_confu_matrix.csv', confu_matrix, delimiter=',')
-    #aver_confu_mat = np.mean(confu_matri, axis=0)
-    #np.savetxt(save_dir + 'aver_confu_matrix.csv', aver_confu_mat, delimiter=',')
+    np.savetxt(save_dir + '26sub_confu_matrix.csv', confu_matrix, delimiter=',', fmt='%s')
+    # aver_confu_mat = np.mean(confu_matri, axis=0)
+    # np.savetxt(save_dir + 'aver_confu_matrix.csv', aver_confu_mat, delimiter=',')
+
 
 def save_total_csv(confu_matrix, save_dir):
     np.savetxt(save_dir + 'total_confu_matrix.csv', confu_matrix, delimiter=',')
 
-def save_txt(info_dict,save_dir):
+
+def save_txt(info_dict, save_dir):
     save_dir = save_dir + 'para-num__training-time.txt'  # 文件路径
     f = open(save_dir, 'w', encoding='utf-8')  # 以'w'方式打开文件
     for k, v in info_dict.items():  # 遍历字典中的键值
         s = str(v)  # 把字典的值转换成字符型
         f.write(k + '\n')  # 键和值分行放，键在单数行，值在双数行
         f.write(s + '\n')
-    f.write('epochs:'+str(epochs)+'\n')
-    f.write('batch_size:'+str(batch_size)+'\n')
+    f.write('epochs:' + str(epochs) + '\n')
+    f.write('batch_size:' + str(batch_size) + '\n')
     f.close()

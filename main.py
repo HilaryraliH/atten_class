@@ -37,6 +37,7 @@ for once in range(total_times):
         # erect model
         if os.path.exists(save_model_dir):
             model = load_model(save_model_dir,custom_objects={'AttentionLayer':AttentionLayer})
+            model.summary()
         else:
             if len(model_names)==1:
                 model = erect_single_model()
@@ -75,9 +76,13 @@ for once in range(total_times):
         # save info
         numParams = model.count_params()
         info_dict['numParams'] = numParams
-        confu_matrix = my_append_row(confu_matrix, confu_mat)  # save confu_matrix to save_to_csv
+        # save confu_matrix to save_to_csv
+        confu_matrix = my_append_row(confu_matrix,confu_mat)
+        save_csv(confu_matrix, save_dir)
+
         acc_list = np.append(acc_list, acc)  # save each sub's acc
         print("Classification accuracy: %f " % (acc))
+
 
         del X_train, Y_train, X_test, Y_test
         import gc
@@ -86,10 +91,11 @@ for once in range(total_times):
     # save to file
     end = time()
     training_time = (end - start) / 3600
-    total_confu_matrix = my_append_col(total_confu_matrix,confu_matrix)
+
     info_dict['training_time'] = str(training_time) + ' hours'
     save_acc_pic(acc_list, save_dir)
     save_csv(confu_matrix, save_dir)
     save_txt(info_dict, save_dir)
+    total_confu_matrix = my_append_col(total_confu_matrix, confu_matrix)
 save_total_csv(total_confu_matrix,root_dir)
 

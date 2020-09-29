@@ -1118,6 +1118,153 @@ def Spatial_branches(model_input,chan_num):
     return model
 
 
+def Time_Spatial_branches(model_input,chan_num):
+    # Only time (no spatial)
+    block1 = Conv3D(16, (1, 1, 5), strides=(1, 1, 4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    block2 = Conv3D(32, (1, 1, 3), strides=(1, 1, 2))(block1)
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('relu')(block2)
+
+    block3 = Conv3D(64, (1, 1, 3), strides=(1, 1, 2))(block2)
+    block3 = BatchNormalization()(block3)
+    block3 = Activation('relu')(block3)
+
+    flattened = Flatten()(block3)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put_no_Spatial = Dense(2, activation='softmax')(dense2)
+
+    # mid Spatial
+    # block4 = Conv3D(16, (3, 3, 5), strides=(1, 1, 4))(model_input)
+    # block4 = BatchNormalization()(block4)
+    # block4 = Activation('relu')(block4)
+    #
+    # block5 = Conv3D(32, (3, 3, 3), strides=(1, 1, 2))(block4)
+    # block5 = BatchNormalization()(block5)
+    # block5 = Activation('relu')(block5)
+    #
+    # block6 = Conv3D(64, (3, 3, 3), strides=(1, 1, 2))(block5)
+    # block6 = BatchNormalization()(block6)
+    # block6 = Activation('relu')(block6)
+    #
+    # flattened = Flatten()(block6)
+    # dense3 = Dense(32)(flattened)
+    # dense3 = BatchNormalization()(dense3)
+    # dense3 = Activation('relu')(dense3)
+    #
+    # dense4 = Dense(32)(dense3)
+    # dense4 = BatchNormalization()(dense4)
+    # dense4 = Activation('relu')(dense4)
+    #
+    # out_put_mid_Spatial = Dense(2, activation='softmax')(dense4)
+
+    # big Spatial
+    block7 = Conv3D(16, (4, 4, 5), strides=(1, 1, 4))(model_input)
+    block7 = BatchNormalization()(block7)
+    block7 = Activation('relu')(block7)
+
+    block8 = Conv3D(32, (4, 4, 3), strides=(1, 1, 2))(block7)
+    block8 = BatchNormalization()(block8)
+    block8 = Activation('relu')(block8)
+
+    flattened = Flatten()(block8)
+    dense5 = Dense(100)(flattened)
+    dense5 = BatchNormalization()(dense5)
+    dense5 = Activation('relu')(dense5)
+
+    dense6 = Dense(32)(dense5)
+    dense6 = BatchNormalization()(dense6)
+    dense6 = Activation('relu')(dense6)
+
+    out_put_big_Spatial = Dense(2, activation='softmax')(dense6)
+
+    # no Time
+    block1 = Conv3D(16, (3, 3, 5), strides=(1, 1, 4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    block2 = Conv3D(32, (3, 3, 1), strides=(1, 1, 1))(block1)
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('relu')(block2)
+
+    block3 = Conv3D(64, (3, 3, 1), strides=(1, 1, 1))(block2)
+    block3 = BatchNormalization()(block3)
+    block3 = Activation('relu')(block3)
+
+    flattened = Flatten()(block3)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put_no_time = Dense(2, activation='softmax')(dense2)
+
+    # mid Time
+    block4 = Conv3D(16, (3, 3, 5), strides=(2, 2, 4))(model_input)
+    block4 = BatchNormalization()(block4)
+    block4 = Activation('relu')(block4)
+
+    block5 = Conv3D(32, (2, 2, 3), strides=(2, 2, 2))(block4)
+    block5 = BatchNormalization()(block5)
+    block5 = Activation('relu')(block5)
+
+    block6 = Conv3D(64, (2, 2, 3), strides=(2, 2, 2))(block5)
+    block6 = BatchNormalization()(block6)
+    block6 = Activation('relu')(block6)
+
+    flattened = Flatten()(block6)
+    dense3 = Dense(32)(flattened)
+    dense3 = BatchNormalization()(dense3)
+    dense3 = Activation('relu')(dense3)
+
+    dense4 = Dense(32)(dense3)
+    dense4 = BatchNormalization()(dense4)
+    dense4 = Activation('relu')(dense4)
+
+    out_put_mid_time = Dense(2, activation='softmax')(dense4)
+
+    # # big Time
+    # block7 = Conv3D(16, (3, 3, 5), strides=(2, 2, 4))(model_input)
+    # block7 = BatchNormalization()(block7)
+    # block7 = Activation('relu')(block7)
+    #
+    # block8 = Conv3D(32, (2, 2, 5), strides=(2, 2, 4))(block7)
+    # block8 = BatchNormalization()(block8)
+    # block8 = Activation('relu')(block8)
+    #
+    # block9 = Conv3D(64, (2, 2, 5), strides=(2, 2, 4))(block8)
+    # block9 = BatchNormalization()(block9)
+    # block9 = Activation('relu')(block9)
+    #
+    # flattened = Flatten()(block9)
+    # dense5 = Dense(32)(flattened)
+    # dense5 = BatchNormalization()(dense5)
+    # dense5 = Activation('relu')(dense5)
+    #
+    # dense6 = Dense(32)(dense5)
+    # dense6 = BatchNormalization()(dense6)
+    # dense6 = Activation('relu')(dense6)
+    #
+    # out_put_big_time = Dense(2, activation='softmax')(dense6)
+
+    # add and classification
+    dense_out = Add()([out_put_no_Spatial,out_put_mid_time,out_put_big_Spatial,out_put_no_time])
+    classifiction = Softmax()(dense_out)
+    model = Model(model_input, classifiction)
+    return model
+
 
 def Big_Three_D_model(model_input, chan_num):
 
@@ -1147,4 +1294,167 @@ def Big_Three_D_model(model_input, chan_num):
     model = Model(model_input,out_put)
     return model
 
+
+def Time_Mid_3D_densenet_1line(model_input, chan_num):
+
+    block1 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    # dense block 1 (db1) : inputsize: 4,4,99,16
+    db1 = Conv3D(32,(2,2,3),padding='same')(block1)
+    db1 = BatchNormalization()(db1)
+    db1 = Activation('relu')(db1)
+
+    db2 = Conv3D(32,(2,2,3),padding='same')(db1)
+    db2 = BatchNormalization()(db2)
+    db2 = Activation('relu')(db2)
+
+    conca = Concatenate(axis=-1)([db1,db2])
+
+    # transition bolock 1 : inputsize: 4,4,99,64
+    db3 = Conv3D(32,(2,2,3),strides=(2,2,2))(conca)
+    db3 = BatchNormalization()(db3)
+    db3 = Activation('relu')(db3)
+
+    # dense block 2: inputsize: 4,4,99,64
+    db3 = Conv3D(32,(2,2,3),padding='same')(db3)
+    db3 = BatchNormalization()(db3)
+    db3 = Activation('relu')(db3)
+
+    db4 = Conv3D(32,(2,2,3),padding='same')(db3)
+    db4 = BatchNormalization()(db4)
+    db4 = Activation('relu')(db4)
+
+    conca = Concatenate(axis=-1)([db3, db4])
+
+    # transition bolock 2 : inputsize: 4,4,99,64
+    db5 = Conv3D(64,(2,2,3),strides=(2,2,2))(conca)
+    db5 = BatchNormalization()(db5)
+    db5 = Activation('relu')(db5)
+
+    # dense block 3: inputsize: 4,4,99,64
+    db5 = Conv3D(64,(2,2,3),padding='same')(db5)
+    db5 = BatchNormalization()(db5)
+    db5 = Activation('relu')(db5)
+
+    db6 = Conv3D(64,(2,2,3),padding='same')(db5)
+    db6 = BatchNormalization()(db6)
+    db6 = Activation('relu')(db6)
+
+    conca = Concatenate(axis=-1)([db5, db6])
+
+    # flatten and classification
+    flattened = Flatten()(conca)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put = Dense(2,activation='softmax')(dense2)
+
+    model = Model(model_input,out_put)
+    return model
+
+
+def Time_Mid_3D_densenet_3line(model_input, chan_num):
+
+    block1 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    # dense block 1 (db1) : inputsize: 4,4,99,16
+    db1 = Conv3D(32,(2,2,3),padding='same')(block1)
+    db1 = BatchNormalization()(db1)
+    db1 = Activation('relu')(db1)
+
+    conca_block1_db1 = Concatenate(axis=-1)([block1,db1])
+
+    db2 = Conv3D(32,(2,2,3),padding='same')(conca_block1_db1)
+    db2 = BatchNormalization()(db2)
+    db2 = Activation('relu')(db2)
+
+    conca_block1_db1_db2 = Concatenate(axis=-1)([block1,db1,db2])
+
+    # transition bolock 1 : inputsize: 4,4,99,64
+    block2 = Conv3D(32,(2,2,3),strides=(2,2,2))(conca_block1_db1_db2)
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('relu')(block2)
+
+    # dense block 2: inputsize: 4,4,99,64
+    db3 = Conv3D(32,(2,2,3),padding='same')(block2)
+    db3 = BatchNormalization()(db3)
+    db3 = Activation('relu')(db3)
+    conca_block2_db3 = Concatenate(axis=-1)([block2, db3])
+
+    db4 = Conv3D(32,(2,2,3),padding='same')(conca_block2_db3)
+    db4 = BatchNormalization()(db4)
+    db4 = Activation('relu')(db4)
+
+    conca_block2_db3_db4 = Concatenate(axis=-1)([block2,db3, db4])
+
+    # transition bolock 2 : inputsize: 4,4,99,64
+    block3 = Conv3D(64,(2,2,3),strides=(2,2,2))(conca_block2_db3_db4)
+    block3 = BatchNormalization()(block3)
+    block3 = Activation('relu')(block3)
+
+    # dense block 3: inputsize: 4,4,99,64
+    db5 = Conv3D(64,(2,2,3),padding='same')(block3)
+    db5 = BatchNormalization()(db5)
+    db5 = Activation('relu')(db5)
+    conca_block3_db5 = Concatenate(axis=-1)([block3, db5])
+
+    db6 = Conv3D(64,(2,2,3),padding='same')(conca_block3_db5)
+    db6 = BatchNormalization()(db6)
+    db6 = Activation('relu')(db6)
+
+    conca_block3_db5_db6 = Concatenate(axis=-1)([block3,db5, db6])
+
+    # flatten and classification
+    flattened = Flatten()(conca_block3_db5_db6)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put = Dense(2,activation='softmax')(dense2)
+
+    model = Model(model_input,out_put)
+    return model
+
+
+
+def No_spatial_3D(model_input,chan_num):
+    # Only time (no spatial)
+    block1 = Conv3D(16, (1, 1, 5), strides=(1, 1, 4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    block2 = Conv3D(32, (1, 1, 3), strides=(1, 1, 2))(block1)
+    block2 = BatchNormalization()(block2)
+    block2 = Activation('relu')(block2)
+
+    block3 = Conv3D(64, (1, 1, 3), strides=(1, 1, 2))(block2)
+    block3 = BatchNormalization()(block3)
+    block3 = Activation('relu')(block3)
+
+    flattened = Flatten()(block3)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    classifiction = Dense(2, activation='softmax')(dense2)
+
+    model = Model(model_input, classifiction)
+    return model
 
