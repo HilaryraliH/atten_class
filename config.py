@@ -41,7 +41,8 @@ model_to_dataformat = {
     'Time_Spatial_branches':'2D',
     'No_spatial_3D':'2D',
     'Time_Mid_3D_densenet_1line':'2D',
-    'Time_Mid_3D_densenet_3line':'2D'
+    'Time_Mid_3D_densenet_3line':'2D',
+    'Time_Mid_3D_densenet_0line':'2D'
 }
 
 optimal_9 = [16, 24, 54, 55, 57, 58, 59, 60, 61]
@@ -69,7 +70,6 @@ area_to_elecs = {
     'Simultaneous_P':[11, 12, 13, 14, 15, 25, 26, 27],
     'Simultaneous':[i for i in range(28)]
 }
-
 area_to_elecs['F_9'] = area_to_elecs['F']+area_to_elecs['9']
 area_to_elecs['F_C_9'] = area_to_elecs['F']+area_to_elecs['C']+area_to_elecs['9']
 
@@ -87,8 +87,8 @@ def check_path(dir):
 #以下是要改的部分
 ##############################
 
-is_plot_model = False# 在1080上，改为 False
-model_names = ['Time_Mid_3D_densenet_3line']
+is_plot_model = True# 在1080上，改为 False
+model_names = ['Time_Mid_3D_densenet_0line']
 select_chan_way = ['Simultaneous'] #,'P_mid','P_right'
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5

@@ -97,16 +97,6 @@ def save_acc_pic(acc_list, save_dir):
     np.savetxt(save_dir + 'each_acc.csv', acc_list, delimiter=',')
 
 
-def save_csv(confu_matrix, save_dir):
-    np.savetxt(save_dir + '26sub_confu_matrix.csv', confu_matrix, delimiter=',', fmt='%s')
-    # aver_confu_mat = np.mean(confu_matri, axis=0)
-    # np.savetxt(save_dir + 'aver_confu_matrix.csv', aver_confu_mat, delimiter=',')
-
-
-def save_total_csv(confu_matrix, save_dir):
-    np.savetxt(save_dir + 'total_confu_matrix.csv', confu_matrix, delimiter=',')
-
-
 def save_txt(info_dict, save_dir):
     save_dir = save_dir + 'para-num__training-time.txt'  # 文件路径
     f = open(save_dir, 'w', encoding='utf-8')  # 以'w'方式打开文件

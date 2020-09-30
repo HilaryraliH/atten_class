@@ -53,7 +53,7 @@ for once in range(total_times):
         if sub == 0 and once == 0:
             model.summary()
         if is_plot_model:
-            plot_model(model,to_file=root_dir+'model_structure.png',show_shapes=True)
+            plot_model(model,to_file=root_dir+str(model_names)+'.png',show_shapes=True)
             print('\n===================finish plot model image===================\n')
         print('\n===================== start training {}th fold ==========================\n'.format(sub))
 
@@ -74,13 +74,15 @@ for once in range(total_times):
             acc, confu_mat = evaluate_model(model, X_test, Y_test)  # evaluate model
 
         # save info
-        numParams = model.count_params()
-        info_dict['numParams'] = numParams
+        info_dict['numParams'] = model.count_params()
+
         # save confu_matrix to save_to_csv
         confu_matrix = my_append_row(confu_matrix,confu_mat)
-        save_csv(confu_matrix, save_dir)
+        np.savetxt(save_dir + '26sub_confu_matrix.csv', confu_matrix, delimiter=',', fmt='%s')
 
         acc_list = np.append(acc_list, acc)  # save each sub's acc
+        np.savetxt(save_dir + 'acc_list.csv', np.array(acc_list), delimiter=',')
+        save_acc_pic(acc_list, save_dir)
         print("Classification accuracy: %f " % (acc))
 
 
@@ -94,8 +96,8 @@ for once in range(total_times):
 
     info_dict['training_time'] = str(training_time) + ' hours'
     save_acc_pic(acc_list, save_dir)
-    save_csv(confu_matrix, save_dir)
+    np.savetxt(save_dir + '26sub_confu_matrix.csv', confu_matrix, delimiter=',', fmt='%s')
     save_txt(info_dict, save_dir)
     total_confu_matrix = my_append_col(total_confu_matrix, confu_matrix)
-save_total_csv(total_confu_matrix,root_dir)
+np.savetxt(save_dir + 'total_confu_matrix.csv', total_confu_matrix, delimiter=',')
 

@@ -1295,6 +1295,65 @@ def Big_Three_D_model(model_input, chan_num):
     return model
 
 
+def Time_Mid_3D_densenet_0line(model_input, chan_num):
+
+    block1 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
+    block1 = BatchNormalization()(block1)
+    block1 = Activation('relu')(block1)
+
+    # dense block 1 (db1) : inputsize: 4,4,99,16
+    db1 = Conv3D(32,(2,2,3),padding='same')(block1)
+    db1 = BatchNormalization()(db1)
+    db1 = Activation('relu')(db1)
+
+    db2 = Conv3D(32,(2,2,3),padding='same')(db1)
+    db2 = BatchNormalization()(db2)
+    db2 = Activation('relu')(db2)
+
+    # transition bolock 1 : inputsize: 4,4,99,64
+    db3 = Conv3D(32,(2,2,3),strides=(2,2,2))(db2)
+    db3 = BatchNormalization()(db3)
+    db3 = Activation('relu')(db3)
+
+    # dense block 2: inputsize: 4,4,99,64
+    db3 = Conv3D(32,(2,2,3),padding='same')(db3)
+    db3 = BatchNormalization()(db3)
+    db3 = Activation('relu')(db3)
+
+    db4 = Conv3D(32,(2,2,3),padding='same')(db3)
+    db4 = BatchNormalization()(db4)
+    db4 = Activation('relu')(db4)
+
+    # transition bolock 2 : inputsize: 4,4,99,64
+    db5 = Conv3D(64,(2,2,3),strides=(2,2,2))(db4)
+    db5 = BatchNormalization()(db5)
+    db5 = Activation('relu')(db5)
+
+    # dense block 3: inputsize: 4,4,99,64
+    db5 = Conv3D(64,(2,2,3),padding='same')(db5)
+    db5 = BatchNormalization()(db5)
+    db5 = Activation('relu')(db5)
+
+    db6 = Conv3D(64,(2,2,3),padding='same')(db5)
+    db6 = BatchNormalization()(db6)
+    db6 = Activation('relu')(db6)
+
+    # flatten and classification
+    flattened = Flatten()(db6)
+    dense1 = Dense(32)(flattened)
+    dense1 = BatchNormalization()(dense1)
+    dense1 = Activation('relu')(dense1)
+
+    dense2 = Dense(32)(dense1)
+    dense2 = BatchNormalization()(dense2)
+    dense2 = Activation('relu')(dense2)
+
+    out_put = Dense(2,activation='softmax')(dense2)
+
+    model = Model(model_input,out_put)
+    return model
+
+
 def Time_Mid_3D_densenet_1line(model_input, chan_num):
 
     block1 = Conv3D(16,(3,3,5),strides=(2,2,4))(model_input)
