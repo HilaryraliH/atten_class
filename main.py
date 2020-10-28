@@ -5,12 +5,22 @@ from data_pre import load_sub,load_sub_3D
 from train_model import fit_model, evaluate_model
 from keras.utils import plot_model
 from keras.models import load_model
+import keras.backend.tensorflow_backend as KTF
+import tensorflow as tf
+
 from save_info import *
 from model import *
 from atten_layer import AttentionLayer
-os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
 from config import *
 
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
+sess = tf.compat.v1.Session(config=config)
+tf.compat.v1.keras.backend.set_session(sess)
+#KTF.set_session(sess)
+
+os.environ["PATH"] += os.pathsep + 'C:/C1_Install_package/Graphviz/Graphviz 2.44.1/bin'
 
 total_confu_matrix = None
 for once in range(total_times):
@@ -26,7 +36,7 @@ for once in range(total_times):
     save_model_dir = None
     info_dict = {}
 
-    for sub in range(12):
+    for sub in range(26):
 
         # 定义每次循环一个sub的变量
         save_model_dir = save_dir + str(sub) + '.h5'
