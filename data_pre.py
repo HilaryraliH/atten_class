@@ -128,7 +128,7 @@ def load_sub_3D(sub):
         Train_y = train_y
         Test_x.append(test_x)
         Test_y = test_y
-    # 若5个一起输入
+    # 若5个一起输入，把样本数量拼起来
     if len(model_names) == 1:
         if dataformat_list[0] == '2D':
             Train_x = [np.concatenate([valu for valu in Train_x], axis=1)]
@@ -186,4 +186,108 @@ def load_sub_3D(sub):
     print(Train_X.shape, Test_X.shape)
     print(Train_y.shape, Test_y.shape)
 
+    
+    if is_interpolate:
+        from scipy import interpolate
+        import matplotlib as mpl
+        import pylab as pl
+
+
+        # 对每一个样本都进行插值
+        for i in range(Train_X.shape[0]):
+            # 对每一个 9*9 都进行插值，共400个
+            for j in range(Train_X.shape[-2]):
+                # 生成二维坐标
+                x = np.array([val[0] for val in index_to_locate.values()])
+                y = np.array([val[1] for val in index_to_locate.values()])
+                fvals_99 = Train_X[i,:,:,j,0] # 9*9矩阵
+                fvals = Train_x[i,:,j] # 28的向量
+
+                # # 画出原来的9*9矩阵
+                # pl.subplot(121)
+                # im1=pl.imshow(fvals_99, extent=[-1,1,-1,1], cmap=mpl.cm.hot, interpolation='nearest', origin="lower")#pl.cm.jet
+                # pl.colorbar(im1)
+
+                # 进行3次插值
+                # newfunc = interpolate.interp2d(x, y, fvals, kind='cubic') # 返回的是一个函数
+                # 因为原来的电极数据不是规则的网格，用这种方法无法对其进行插值
+                fnew = interp2d_station_to_grid(x, y,fvals)#仅仅是y值   100*100的值
+                Train_X[i,:,:,j,0] = fnew
+
+                # # 画出查之后的9*9矩阵
+                # pl.subplot(122)
+                # im2=pl.imshow(fnew, extent=[-1,1,-1,1], cmap=mpl.cm.hot, interpolation='nearest', origin="lower")
+                # pl.colorbar(im2)
+                # pl.show()
+
+        # 处理测试样本的插值
+        for i in range(Test_X.shape[0]):
+            # 对每一个 9*9 都进行插值，共400个
+            for j in range(Test_X.shape[-2]):
+                # 生成二维坐标
+                x = np.array([val[0] for val in index_to_locate.values()])
+                y = np.array([val[1] for val in index_to_locate.values()])
+                fvals_99 = Test_X[i,:,:,j,0] # 9*9矩阵
+                fvals = Test_x[i,:,j] # 28的向量
+
+                # # 调试时画出原来的9*9矩阵
+                # pl.subplot(121)
+                # im1=pl.imshow(fvals_99, extent=[-1,1,-1,1], cmap=mpl.cm.hot, interpolation='nearest', origin="lower")#pl.cm.jet
+                # pl.colorbar(im1)
+
+                # 进行3次插值
+                # newfunc = interpolate.interp2d(x, y, fvals, kind='cubic') # 返回的是一个函数
+                # 因为原来的电极数据不是规则的网格，用这种方法无法对其进行插值
+                fnew = interp2d_station_to_grid(x, y,fvals)#仅仅是y值   100*100的值
+                Test_X[i,:,:,j,0] = fnew
+
+                # # 调试时画出查之后的9*9矩阵
+                # pl.subplot(122)
+                # im2=pl.imshow(fnew, extent=[-1,1,-1,1], cmap=mpl.cm.hot, interpolation='nearest', origin="lower")
+                # pl.colorbar(im2)
+                # pl.show()
+  
+
+    print('shape after interpolate')
+    print(Train_X.shape, Train_X.shape)
+    print(Train_y.shape, Test_y.shape)
+
     return (Train_X, Train_y), (Test_X, Test_y)
+
+
+# 改编自 https://blog.csdn.net/weixin_43718675/article/details/103497930
+def interp2d_station_to_grid(lon,lat,data,method = 'cubic'):
+    '''
+    func : 将站点数据插值到等经纬度格点
+    inputs:
+        lon: 站点的经度
+        lat: 站点的纬度
+        data: 对应经纬度站点的 气象要素值
+        method: 所选插值方法，默认 0.125
+    return:
+        
+        [lon_grid,lat_grid,data_grid]
+    '''
+    from scipy.interpolate import griddata
+
+    #step1: 先将 lon,lat,data转换成 n*1 的array数组
+    lon = np.array(lon).reshape(-1,1)
+    lat = np.array(lat).reshape(-1,1)
+    data = np.array(data).reshape(-1,1)
+    
+    #shape = [n,2]
+    points = np.concatenate([lon,lat],axis = 1)
+    lon_grid, lat_grid = np.mgrid[0:9,0:9]
+    
+    #step3:进行网格插值
+    grid_data = griddata(points,data,(lon_grid,lat_grid),method = method)
+    grid_data = grid_data[:,:,0]
+    
+    # #保证纬度从上到下是递减的
+    # if lat_grid[0,0]<lat_grid[1,0]:
+    #     lat_grid = lat_grid[-1::-1]
+    #     grid_data = grid_data[-1::-1]
+
+    print('grid_data.shape',grid_data.shape)
+    
+    return grid_data

@@ -101,7 +101,7 @@ def check_path(dir):
 ##############################
 
 is_plot_model = False# 在1080上，改为 False
-model_names = ['Time_Mid_3D_densenet_0line_RNN']
+model_names = ['Time_Mid_3D_densenet_0line']
 select_chan_way = ['Simultaneous'] #,'P_mid','P_right'
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
@@ -109,6 +109,7 @@ band_pass = False
 attention_mechanism = False
 share_model = False # 当建立参数共享的模型时，为true，此时model_names也需要有“分支数量”个，但建立真的模型时，只建立一个
 is_3D = True
+is_interpolate = True
 mak_dir_other_info = ''
 
 band_pass_num = 5 # 滤波的数量
