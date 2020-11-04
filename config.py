@@ -55,7 +55,10 @@ model_to_dataformat = {
     'Time_Mid_3D_densenet_3Conv_line_between_block':'2D',
     'Time_Mid_3D_densenet_4Conv_6line_4transition':'2D',
     'Time_Mid_3D_densenet_3Conv_0line_one_denseLayer':'2D',
-    'Time_Mid_3D_densenet_0line_RNN':'2D'
+    'Time_Mid_3D_densenet_0line_RNN':'2D',
+    'Smaller_Deeper_DeepConvNet':'2D',
+    'Smaller_Resnet_DeepConvNet':'2D',
+    'Smaller_Resnet_Deeper_DeepConvNet':'2D'
 }
 
 optimal_9 = [16, 24, 54, 55, 57, 58, 59, 60, 61]
@@ -86,6 +89,10 @@ area_to_elecs = {
 area_to_elecs['F_9'] = area_to_elecs['F']+area_to_elecs['9']
 area_to_elecs['F_C_9'] = area_to_elecs['F']+area_to_elecs['C']+area_to_elecs['9']
 
+
+
+
+
 import os
 def check_path(dir):
     if not os.path.exists(dir):
@@ -101,15 +108,17 @@ def check_path(dir):
 ##############################
 
 is_plot_model = False# 在1080上，改为 False
-model_names = ['Time_Mid_3D_densenet_0line']
+model_names = ['Smaller_Resnet_DeepConvNet']
 select_chan_way = ['Simultaneous'] #,'P_mid','P_right'
 # select_chan_way = ['9_1','9_2','9_3','9_4','9_5','9_6','9_7','9_8','9_9'] # 每个分支对应的输入数据;
 # 当bandpass= True 时，若一起输入，对5文件都提取相同的通道，也需要 用五个，如['9']*5
 band_pass = False
 attention_mechanism = False
 share_model = False # 当建立参数共享的模型时，为true，此时model_names也需要有“分支数量”个，但建立真的模型时，只建立一个
-is_3D = True
+is_3D = False
 is_interpolate = True
+
+
 mak_dir_other_info = ''
 
 band_pass_num = 5 # 滤波的数量
@@ -141,6 +150,9 @@ else:
 
 root_dir = 'results\\' + str(model_names) + str(select_chan_way)+ '_'+is_band_pass+ '_'+is_attention_mechanism+'_'+mak_dir_other_info+'\\'
 # root_dir = 'results\\' + str('[5个EEGNet分支]') + str('Simultaneous_F') + '_' + is_band_pass + '_' + is_attention_mechanism + '_' + mak_dir_other_info + '\\'
+
+
+
 check_path(root_dir)
 
 
